@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+
+
+    <head>
+
+        <meta charset="utf-8" />
+        <title>Dashboard | Lexa - Admin & Dashboard Template</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+        <meta content="Themesbrand" name="author" />
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="images/favicon.ico">
+    
+        <!-- Bootstrap Css -->
+        <link href="css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
+        <!-- Icons Css -->
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css">
+        <link href="css/icons.min.css" rel="stylesheet" type="text/css" />
+        <!-- App Css-->
+        <link href="css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+      
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+    
+        <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    
+    
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <style>
+        html{
+            border: 0 !important;
+        }
+  
+    </style>
+    
+</head>
+
+  <body data-sidebar="dark">
+    <%- include("partials/menuAndNav") %>
+    <div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+    <section>
+        <div class="container">
+            <div class="col-lg-10">
+                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item m-2" role="presentation">
+                      <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Admin registration</button>
+                    </li>
+                    <li class="nav-item m-2" role="presentation">
+                      <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Employee registration</button>
+                    </li>
+                    <li class="nav-item m-2" role="presentation">
+                      <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Fleet registration</button>
+                    </li>
+                  </ul>
+                  <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                        <h4>Admin regestration</h4>
+                        <br>
+                        <div class="col-lg-12">
+                            <form name="adminReg" method="post" action="/addAdmin">
+                                <div class="row">
+                                    <div  class="col-lg-4 m-2">
+                                        <label  class="form-label">Name</label>
+                                        <input name="name" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">                                    
+                                    </div>
+                                    <div class="col-lg-4 m-2">
+                                        <label  class="form-label">Email address</label>
+                                        <input name="username" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">                                    
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4 m-2">
+                                        <label  class="form-label">Phone number</label>
+                                        <input name="phoneno" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">                                    
+                                    </div>
+                                </div>
+
+                        <div class="col-lg-4 m-2">
+                                 <label  class="form-label">Password</label>
+                                <input name="password"  class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">                                    
+                        </div>    
+                        <input name="role" style="display: none;" value="Admin" class="form-control">                                    
+                                <br>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+
+
+                    <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab"></div>
+
+<!-- Driver regestration -->
+
+                    <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">                        <div class="col-lg-12">
+                        <form name="fleetReg" method="post" action="/addFleet">
+                            <div class="row">
+                                <div  class="col-lg-4 m-2">
+                                    <label  class="form-label">Name</label>
+                                    <input name="name" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">                                    
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 m-2">
+                                    <label  class="form-label">Email address</label>
+                                    <input name="username" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">                                    
+                                </div>
+                                <div class="col-lg-4 m-2">
+                                    <label  class="form-label">Phone number</label>
+                                    <input name="phoneno" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">                                    
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 m-2">
+                                    <label  class="form-label">Vehicle type</label>
+                                    <input name="vehType" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">                                    
+                                </div>
+                                <div class="col-lg-4 m-2">
+                                    <label  class="form-label">Vehicle  number</label>
+                                    <input name="vehNum" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">                                    
+                                </div>
+                            </div>
+
+                    <div class="col-lg-4 m-2">
+                             <label  class="form-label">Password</label>
+                            <input name="password"  class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">                                    
+                    </div>    
+                    <input name="role" style="display: none;" value="Fleet" class="form-control">                                    
+                            <br>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div></div>
+                  </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+    </section>
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script>
+var tabEl = document.querySelector('button[data-bs-toggle="tab"]')
+tabEl.addEventListener('shown.bs.tab', function (event) {
+  event.target // newly activated tab
+  event.relatedTarget // previous active tab
+})
+    </script>
+ 
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSX3jhBJVmlod62B-joxdetnWt-_yBnLM&callback=initMap&libraries=places&v=weekly"></script>
+        
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+    <%- include("partials/footer") %>

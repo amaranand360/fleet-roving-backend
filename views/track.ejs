@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta charset="utf-8" />
+    <title>Roads API Demo</title>
+    <style>
+      html,
+      body,
+      #map {
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+      }
+
+      #panel {
+        position: absolute;
+        top: 5px;
+        left: 50%;
+        margin-left: -180px;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+      }
+
+      #bar {
+        width: 240px;
+        background-color: rgba(255, 255, 255, 0.75);
+        margin: 8px;
+        padding: 4px;
+        border-radius: 4px;
+      }
+
+      #autoc {
+        width: 100%;
+        box-sizing: border-box;
+      }
+    </style>
+
+<script src="https://www.gstatic.com/external_hosted/jquery2.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?interpolate=true&libraries=drawing,places&key=AIzaSyDSX3jhBJVmlod62B-joxdetnWt-_yBnLM"></script>
+
+
+<script>
+
+
+
+window.onload =  function(){
+
+// Try HTML5 geolocation.
+
+
+
+};
+
+
+
+
+
+
+
+
+  function initMap() {
+    var mapOptions = {
+      zoom: 15,
+      center: {
+        lat: 12.890399,
+        lng: 77.646046
+      }
+    };
+    map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+    map.data.addGeoJson(data);
+
+    var lines = data.features;
+    for (var i = 0; i < lines.length; i++) {
+      var coords = [];
+      for (var j = 0; j < lines[i].geometry.coordinates.length; j++) {
+        coords.push([
+          lines[i].geometry.coordinates[j][1],
+          lines[i].geometry.coordinates[j][0]
+        ]);
+      }
+      console.log("array: ", coords);
+      runSnapToRoad(coords);
+    }
+  }
+
+  // Snap a user-created polyline to roads and draw the snapped path
+  function runSnapToRoad(finalArray) {
+    $.get(
+      "https://roads.googleapis.com/v1/snapToRoads",
+      {
+        interpolate: true,
+        key: apiKey,
+        path: finalArray.join("|")
+      },
+      function (data) {
+        processSnapToRoadResponse(data);
+        drawSnappedPolyline();
+      }
+    );
+  }
+
+      // Store snapped polyline returned by the snap-to-road service.
+      function processSnapToRoadResponse(data) {
+        snappedCoordinates = [];
+        placeIdArray = [];
+        for (var i = 0; i < data.snappedPoints.length; i++) {
+          var latlng = new google.maps.LatLng(
+            data.snappedPoints[i].location.latitude,
+            data.snappedPoints[i].location.longitude
+          );
+          snappedCoordinates.push(latlng);
+          placeIdArray.push(data.snappedPoints[i].placeId);
+        }
+      }
+ 
+      // Draws the snapped polyline (after processing snap-to-road response).
+  function drawSnappedPolyline() {
+    var snappedPolyline = new google.maps.Polyline({
+      path: snappedCoordinates,
+      strokeColor: "blue",
+      strokeWeight: 3
+    });
+    snappedPolyline.setMap(map);
+    polylines.push(snappedPolyline);
+  }
+
+      $(window).load(initMap);
+      // var data = {
+      //   type: "FeatureCollection",
+      //   features: [
+      //     {
+      //       type: "Feature",
+      //       properties: {},
+      //       geometry: {
+      //         type: "LineString",
+      //         coordinates: [
+      //           [77.646046, 12.890399],
+      //           [77.644222, 12.890504],
+      //           [77.643149, 12.890378],
+      //           [77.642098, 12.889918],
+      //           [77.641282, 12.889562],
+      //           [77.640222, 12.889022],
+      //           [77.640565, 12.888401],
+      //           [77.640839, 12.88802],
+      //           [77.641116, 12.887567],
+      //           [77.641534, 12.88772]
+      //         ]
+      //       }
+      //     }
+      //   ]
+      // };
+
+
+
+
+//////////////////////////////////////////////////////////////
+
+
+const liveCordinates= [];
+
+
+function initMap() {
+  const map = new google.maps.Map(document.getElementById("map"));
+  const directionsService = new google.maps.DirectionsService();
+  const directionsRenderer = new google.maps.DirectionsRenderer({
+    draggable: true,
+    map,
+    panel: document.getElementById("panel"),
+  });
+
+
+
+  directionsRenderer.addListener("directions_changed", () => {
+    const directions = directionsRenderer.getDirections();
+
+    if (directions) {
+      computeTotalDistance(directions);
+    }
+  });
+  displayRoute(
+    pickUpLatLng,
+    dropLatLng,
+    directionsService,
+    directionsRenderer
+  );
+
+
+setInterval(() => {
+  
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      
+      const pos = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      };
+      
+      console.log( pos.lat);
+      console.log(pos.lng  );
+   
+    },
+
+  );
+
+
+
+ 
+    navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const pos = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      };
+
+      const posy = JSON.stringify(pos);
+      var obj = JSON.parse(posy);
+var values = Object.values(obj);
+      
+      // console.log( pos.lat);
+      //   console.log(pos.lng  );
+        // liveCordinates.push(pos);
+        console.log(liveCordinates);
+        const marker = new google.maps.Marker({
+    position: pos,
+    map: map,
+  });
+        liveCordinates.push(JSON.stringify(values));
+      console.log(JSON.stringify(liveCordinates) + "//////////////////////////////////");
+       
+    },
+
+  );
+
+
+
+}, 2000);
+
+  setInterval(() => {
+
+
+
+      // Snap a user-created polyline to roads and draw the snapped path
+      function runSnapToRoad(finalArray) {
+        $.get(
+          "https://roads.googleapis.com/v1/snapToRoads",
+          {
+            interpolate: true,
+            key: apiKey,
+            path: finalArray.join("|")
+          },
+          function (data) {
+            processSnapToRoadResponse(data);
+            drawSnappedPolyline();
+          }
+        );
+      }
+  $(window).load(initMap);
+
+    
+
+  var data = {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "LineString",
+          coordinates:[
+          ["12.88732678775718","77.6423806225379"],["12.88732678775718","77.6423806225379"],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379]
+          ]
+        }
+      }
+    ]
+  };
+
+
+
+
+
+
+  console.log(liveCordinates + "\n \n \n");
+  
+      // Store snapped polyline returned by the snap-to-road service.
+      function processSnapToRoadResponse(data) {
+        snappedCoordinates = [];
+        placeIdArray = [];
+        for (var i = 0; i < data.snappedPoints.length; i++) {
+          var latlng = new google.maps.LatLng(
+            data.snappedPoints[i].location.latitude,
+            data.snappedPoints[i].location.longitude
+          );
+          snappedCoordinates.push(latlng);
+          placeIdArray.push(data.snappedPoints[i].placeId);
+        }
+      }
+
+      // Draws the snapped polyline (after processing snap-to-road response).
+      function drawSnappedPolyline() {
+        var snappedPolyline = new google.maps.Polyline({
+          path: snappedCoordinates,
+          strokeColor: "blue",
+          strokeWeight: 3
+        });
+        snappedPolyline.setMap(map);
+        polylines.push(snappedPolyline);
+      }
+
+
+  
+  map.data.addGeoJson(data);
+
+var lines = data.features;
+for (var i = 0; i < lines.length; i++) {
+  var coords = [];
+  for (var j = 0; j < lines[i].geometry.coordinates.length; j++) {
+    coords.push([
+      lines[i].geometry.coordinates[j][1],
+      lines[i].geometry.coordinates[j][0]
+    ]);
+  }
+  console.log("array: ", coords);
+  runSnapToRoad(coords);
+}
+
+
+  }, 1000);
+  
+}
+
+function displayRoute(origin, destination, service, display) {
+  service
+    .route({
+      origin: origin,
+      destination: destination,
+    //   waypoints: [
+    //     { location: "Adelaide, SA" },
+    //     { location: "Broken Hill, NSW" },
+    //   ],
+      travelMode: google.maps.TravelMode.DRIVING,
+      avoidTolls: true,
+    })
+    .then((result) => {
+        console.log(result.routes[0].legs[0].distance);
+      display.setDirections(result);
+    })
+    .catch((e) => {
+      alert("Could not display directions due to: " + e);
+    });
+}
+
+function computeTotalDistance(result) {
+  let total = 0;
+  const myroute = result.routes[0];
+
+  if (!myroute) {
+    return;
+  }
+
+  for (let i = 0; i < myroute.legs.length; i++) {
+    total += myroute.legs[i].distance.value;
+  }
+
+  total = total / 1000;
+  // document.getElementById("total").innerHTML = total + " km";
+}
+
+window.initMap = initMap;
+
+  
+
+console.log(latlngsocket + "666");
+
+socket.on("hh", ( livec) =>{
+
+      console.log(livec + "380");
+
+
+      // res.render("track", {latlngsocket:obj});  
+    });
+
+
+
+      var apiKey = "AIzaSyDSX3jhBJVmlod62B-joxdetnWt-_yBnLM";
+
+      var map;
+      var snappedCoordinates = [];
+      var coords;
+      var subArray;
+      var placeIdArray = [];
+      var finalArray = [];
+      var polylines = [];
+    </script>
+        <script src="/socket.io/socket.io.js"></script>
+
+        <script>
+              var socket = io();
+            
+        </script>
+  </head>
+
+  <body>
+    <div id="map"></div>
+    <div id="bar">
+     
+      <!-- <p> <%= result.trips %> </p> -->
+      <br>
+      <br>
+      <h1 type="text" id="pll" style="display: none;"> <%= result.trips[0].pickUpLatLng %> </h1>
+      <h1 type="text" id="dll" style="display: none;"> <%= result.trips[0].dropLatLng %> </h1>
+      <p class="auto"><input type="text" id="autoc" /></p>
+      <p><a id="clear" href="#">Click here</a> to clear map.</p>
+    </div>
+    <script>
+      const pickUpLatLng = document.getElementById("pll").innerHTML;
+const dropLatLng= document.getElementById("dll").innerHTML;
+
+    </script>
+  </body>
+</html>

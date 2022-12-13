@@ -1,0 +1,125 @@
+<%- include("partials/header") -%>
+
+
+
+<body data-sidebar="dark">
+
+    <!-- <body data-layout="horizontal" data-topbar="colored"> -->
+
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Fleet Dashboard</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav">
+                <li class="nav-item active">
+                  <a class="nav-link"  href="/driverTasks">My tasks </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link " style="position:absolute ;right: 10px;" href="/logout">Sign-out</a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+
+
+
+    <div class="m-5" style="display: flex; justify-content: center;">
+        <div class="card" style="width: 40%;">
+        <div class="card-header"   style="height: 150px; width: 100%; background-image: url(https://cdn.pixabay.com/photo/2019/04/26/17/47/color-4158152__340.jpg) ;">
+          <center><h2 style="color: rgb(255, 255, 255); padding-top: 45px;"> Welcome Onboard</h2></center>
+        </div> 
+  
+        <br>
+        <div class="card-body" style="">
+            <% console.log(driver) %>
+            <h6>Driver ID: <span>  <%= driver.driverID %> </span> </h6>
+            <br>
+            <h4>Driver Details</h4>
+            <h6>
+                Name: <span><%=driver.name%></span>
+            </h6>
+            <h6>
+                Mail-Id: <span><%=driver.email %> </span>
+            </h6>
+            <h6>
+                Phone-no: <span><%=driver.phoneno%></span>
+            </h6>
+            <br>
+            <h4>Vehicle Details</h4>
+            <h6>
+                Vehicle-type: <span><%=driver.VehDetails[0].vehType%></span>
+            </h6>
+            <h6>
+                Vehicle-num: <span><%=driver.VehDetails[0].vehNum%></span>
+            </h6>
+
+          </div>  
+        </div>
+           
+          </div>
+    </div>
+
+
+
+
+        <!-- end main content-->
+
+    </div>
+    <!-- END layout-wrapper -->
+
+    <!-- Right Sidebar -->
+    <div class="right-bar">
+        <div data-simplebar class="h-100">
+
+            <div class="rightbar-title d-flex align-items-center px-3 py-4">
+
+                <h5 class="m-0 me-2">Settings</h5>
+
+                <a href="javascript:void(0);" class="right-bar-toggle ms-auto">
+                        <i class="mdi mdi-close noti-icon"></i>
+                    </a>
+            </div>
+
+            <!-- Settings -->
+            <hr class="mt-0" />
+
+
+
+
+
+            <h6 class="text-center mb-0 mt-3">Choose Layouts</h6>
+
+            <div class="p-4">
+                <a href="">Sign Out</a>
+            </div>
+
+        </div>
+        <!-- end slimscroll-menu-->
+    </div>
+    <!-- /Right-bar -->
+
+    <!-- Right bar overlay-->
+    <div class="rightbar-overlay"></div>
+
+    <!-- JAVASCRIPT -->
+    <script src="assets/libs/jquery/jquery.min.js"></script>
+    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/libs/metismenu/metisMenu.min.js"></script>
+    <script src="assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="assets/libs/node-waves/waves.min.js"></script>
+    <script src="assets/libs/jquery-sparkline/jquery.sparkline.min.js"></script>
+
+    <!--Morris Chart-->
+    <script src="assets/libs/morris.js/morris.min.js"></script>
+    <script src="assets/libs/raphael/raphael.min.js"></script>
+
+    <script src="assets/js/pages/dashboard.init.js"></script>
+
+    <script src="assets/js/app.js"></script>
+
+</body>
+
+</html>

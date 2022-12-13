@@ -1,0 +1,78 @@
+<%- include("partials/header") -%>
+
+
+
+<body data-sidebar="dark">
+
+    <!-- <body data-layout="horizontal" data-topbar="colored"> -->
+        <%- include("partials/menuAndNav") -%>
+
+
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="main-content">
+            <div class="page-content">
+                <div class="container-fluid">
+
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="page-title-box">
+                                <h4>Admin dashboard</h4>
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Fleets</a></li>
+                                </ol>
+                            </div>
+                        </div>
+                        <!-- <div class="col-sm-6">
+                            <div class="state-information d-none d-sm-block">
+                                <div class="state-graph">
+                                    <div id="header-chart-1" data-colors='["--bs-primary"]'></div>
+                                    <div class="info">Balance $ 2,317</div>
+                                </div>
+                                <div class="state-graph">
+                                    <div id="header-chart-2" data-colors='["--bs-info"]'></div>
+                                    <div class="info">Item Sold 1230</div>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+
+                </div>
+            </div>
+ 
+<div class="row">
+    <div class="table-responsive col-lg-12  col-md-10 col-sm-10">
+        <table class="table table-hover ">
+            <thead>
+              <tr>
+                <th scope="col">Sl no.</th>
+                <th scope="col">name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phno</th>
+                <th scope="col">Vehicle type</th>
+              </tr>
+            </thead>
+            <tbody>
+    
+            <% fleet.forEach(function(fleet, index){ %>
+              <!-- <% const v =fleet.VehDetails[0] %> -->
+        <% console.log(fleet.VehDetails[0].vehType) %>
+              <tr>
+            <th scope="row"><%= index + 1 %></th>
+            <td> <%= fleet.name %> </td>
+            <td><%= fleet.email %></td>
+            <td><%= fleet.phoneno %></td>
+            <td><%= fleet.VehDetails[0].vehType %></td>
+            <td> <form  action="/fleetManagement" method="post"> <input style="display: none;" name="reqDriver"  value= <%= fleet.id %>> <button class="btn btn-info p-2"   type="submit"> Assign </button> </form> </td>
+          </tr>
+     <% }) %>
+            </tbody>
+          </table>
+    </div>
+</div>
+
+        </div>
+
+        <%- include("partials/footer") -%>
