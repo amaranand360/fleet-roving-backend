@@ -103,11 +103,14 @@ const loginSchema= new mongoose.Schema({
   });
 
   const employeedata = new mongoose.Schema({
-
+    employeeID: {
+      type: String, default:"" 
+    },
     name: String,
     email: String,
     phoneno: String,
     address:String,
+    cordinates:String
 
   });
 
@@ -209,6 +212,23 @@ app.get("/employees", (req,res)=>{
   });
 });
 
+
+app.get("/employeeDashboard", (req,res)=>{
+
+  const userID= req.user.userID;
+
+
+Employee.findOne({employeeID: userID}  , function(err, empresult){
+
+    res.render("employeeDashboard", {
+      empresult:empresult
+      });
+    });
+
+
+
+});
+
 app.get("/login", (req,res)=>{
     res.render("login");
 });
@@ -233,9 +253,28 @@ console.log(req.isAuthenticated + "adminDAshboard");
   if (req.isAuthenticated()) {
     const vv= req.isAuthenticated();
     console.log(vv);
+    const ongng = trips.Status;
 
-    res.render("adminDashboard")
+
+    Driver.count({}, (err, drivercount)=>{
+      Driver.find({},(err, fleetcount)=>{
+       Employee.count({},(err, empCount)=>{
+
+        Driver.find({  },{ongng : "Incomplete"}, (err, onGoing)=>{
+          res.render("adminDashboard", {drivercount:drivercount,fleetcount:fleetcount,empCount:empCount,onGoing:onGoing})
     
+        })
+        
+
+       })
+        
+
+
+        
+      })
+    })
+
+
   }else{
     console.log("You have no prvilages to view this page");
     res.send("You have no prvilages to view this page");
@@ -284,6 +323,7 @@ io.on("connection", (socket) => {
 });
 
 
+
   const kk = req.user.userID;
   console.log(kk);
   Driver.findOne({driverID: kk }, (err, allTasks)=>{
@@ -306,6 +346,7 @@ io.on("connection", (socket) => {
 app.post("/fleetManagement",(req, res)=>{
   
 const requestedDriverID = req.body.reqDriver ;
+
 
 Driver.findOne({_id: requestedDriverID}  , function(err, requestedDriverResult){
 
@@ -511,6 +552,95 @@ console.log(myPlaintextPassword);
   
     res.redirect("/register");
   });
+
+
+
+
+
+  
+app.post("/addEmp", function (req, res) {
+
+
+  const len = process.env.ID_LENGTH;
+  const pattern = process.env.ID_PATTERN;
+  const id = randomId(len, pattern);
+
+
+  User.register({ username: req.body.username }, req.body.password, function (err, client) {
+    if (err) {
+      console.log(err);
+      res.redirect("/register");
+    }
+    else {
+
+      const saltRounds = process.env.NO_OF_SALT_ROUNDS;
+      const myPlaintextPassword = req.body.password;
+console.log( saltRounds);
+console.log(myPlaintextPassword);
+
+      bcrypt.genSalt(saltRounds, function (err, salt) {
+        bcrypt.hash(myPlaintextPassword, salt, function (err, hash) {
+          console.log(hash);
+          User.findOneAndUpdate({ "username": req.body.username },
+          { userID: id, role: req.body.role, password: hash }, { new: true, upsert: true }).exec();
+          console.log(hash + "hash");
+        }); 
+           
+      });
+
+
+    }
+  });
+
+
+  function wait(ms){
+    var start = new Date().getTime();
+    var end = start;
+    while(end < start + ms) {
+      end = new Date().getTime();
+   }
+ }
+
+  console.log('before');
+  wait(1000);  
+  console.log('after');
+
+
+  const empdata = new Employee({
+    employeeID: id,
+    name: req.body.name,
+    email: req.body.username,
+    phoneno: req.body.phoneno,
+    address: req.body.address,
+    cordinates:req.body.cordinates
+  });
+
+
+  console.log('before');
+  wait(2000);  
+  console.log('after');
+
+
+
+
+  empdata.save(function (err) {
+    if (!err) {
+      console.log("gg");
+    }
+  });
+
+  res.redirect("/register");
+});
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -722,8 +852,10 @@ app.get("/log", (req, res)=>{
 
   if (role==="Admin") {
     res.redirect('/adminDashboard');
-  } else {
+  } else if (role === "Fleet") {
     res.redirect('/fleetDashboard');
+  }else if (role === "Employee"){
+    res.redirect("/employeeDashboard");
   }
 })
 

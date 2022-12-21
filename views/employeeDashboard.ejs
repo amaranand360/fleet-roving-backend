@@ -28,41 +28,38 @@
 
     <div class="m-5" style="display: flex; justify-content: center;">
         <div class="card" style="width: 90%;">
-        <div class="card-header"   style="height: 250px; filter: grayscale(100%);  background-position: center; /* Center the image */
-        background-repeat: no-repeat; /* Do not repeat the image */
-        background-size: cover; width: 100%; background-image: url(https://img.freepik.com/premium-vector/black-wide-technology-background_79145-249.jpg?size=626&ext=jpg&uid=R87923467);">
-          <center><h1 style="color: rgb(255, 255, 255); padding-top: 100px;"> Welcome Onboard, <span style="font-size:25px;"> <%=driver.name%> </span>  </h1></center>
+        <div class="card-header"   style="height: 250px; width: 100%;   background-position: center; background-repeat: no-repeat; 
+        background-size: cover ; background-image: url(https://img.freepik.com/free-vector/black-background-with-focus-spot-light_1017-27230.jpg?size=626&ext=jpg&uid=R87923467);">
+          <center><h1 style="color: rgb(255, 255, 255) ; padding-top: 100px;"> Welcome Onboard, <span style="font-size:25px;"><%=empresult.name%></span>  </h1></center>
         </div> 
   
         <br>
         <div class="card-body" style="">
-           
-            <p>Driver ID: <span>  #<%= driver.driverID %> </span> </p>
+
+
+
+            
+
+            <p>Employee ID: <span >  #<%= empresult.employeeID %> </span> </p>
             <br>
-            <h4>Driver Details</h4>
+            <h4>Employee Details</h4>
             <br>
-        
             <h6>
-                Name: <span> <%=driver.name%> </span>
-            </h6>
-       
-            <h6>
-                Mail-Id: <span><%=driver.email %> </span>
-            </h6>
-        
-            <h6>
-                Phone-no: <span><%=driver.phoneno%></span>
+                Name: <span style="font-size:15px; font-weight: 500;" ><%=empresult.name%></span>
             </h6>
             <br>
-            <h4>Vehicle Details</h4>
-   <br>
             <h6>
-                Vehicle-type: <span><%=driver.VehDetails[0].vehType%></span>
+                Mail-Id: <span><%=empresult.email %> </span>
             </h6>
-     
+            <br>
             <h6>
-                Vehicle-num: <span><%=driver.VehDetails[0].vehNum%></span>
+                Phone-no: <span><%=empresult.phoneno %></span>
             </h6>
+<br>
+            <h6>
+                Address: <span><%=empresult.address%></span>
+            </h6>
+            
 
           </div>  
         </div>

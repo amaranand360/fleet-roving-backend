@@ -92,8 +92,8 @@ body {
     <h6 >Distance:</h6> <span id="total"></span> 
     
     <form role="form" action="/start" method="post">
-      <input type="text" name="tripStatus" value="On-going" >
-      <input type="text" name="tripId" value=" <%= currentTask.id %> " >
+      <input style="display: none;" type="text" name="tripStatus" value="On-going" >
+      <input type="text" name="tripId" style="display: none;" value=" <%= currentTask.id %> " >
       <h6 id="socketID">  </h6>  
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
