@@ -862,7 +862,7 @@ app.get("/log", (req, res)=>{
 
 
   server.listen(port, () => {
-    console.log("Server is listening at port 3000S...");
+    console.log("Server is listening at port 3000...");
   });
   
 
