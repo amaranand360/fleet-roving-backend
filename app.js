@@ -16,7 +16,7 @@ const findOrCreate = require('mongoose-findorcreate');
 const axios = require('axios');
 const randomId  = require('random-id');
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 const server = require("http").createServer(app);
 
 const io = require("socket.io")(server, {
@@ -40,7 +40,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-mongoose.connect('mongodb+srv://bpatharun:tharun123@cluster1.3v7i9cn.mongodb.net/Fleet', {useNewUrlParser: true}).then(() => {
+mongoose.connect( process.env.MONGO_URL , {useNewUrlParser: true}).then(() => {
     console.log("connected to database");
 });
 
