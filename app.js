@@ -152,7 +152,7 @@ function ls(){
     console.log(user);
     console.log("5555555");  
     const hashedPassword = user.password;
-      console.log(hashedPassword + "in line 142");
+
 
 
     function verifyPassword() {
@@ -175,7 +175,7 @@ function ls(){
 
 setTimeout(ls, 500)
 
-console.log("this first niggaahh");
+
 
 }
 
@@ -795,7 +795,7 @@ io.on("connection", (socket) => {
   console.log();
 
   socket.on("gg", (obj, livec) =>{
-    console.log(obj);
+    // console.log(obj);
     console.log("\n 5555555555 \n");
     console.log(livec);
     
