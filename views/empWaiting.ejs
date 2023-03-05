@@ -1,0 +1,90 @@
+<%- include("partials/header") -%>
+
+
+
+<body data-sidebar="dark">
+
+    <!-- <body data-layout="horizontal" data-topbar="colored"> -->
+        <%- include("partials/menuAndNav") -%>
+
+
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="main-content">
+            <div class="page-content">
+                <div class="container-fluid">
+
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="page-title-box">
+                                <h4>Admin dashboard</h4>
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Fleet service</a></li>
+                                </ol>
+                            </div>
+                        </div>
+
+
+                        <div>
+                       
+                        </div>
+
+                        <!-- <div class="col-sm-6">
+                            <div class="state-information d-none d-sm-block">
+                                <div class="state-graph">
+                                    <div id="header-chart-1" data-colors='["--bs-primary"]'></div>
+                                    <div class="info">Balance $ 2,317</div>
+                                </div>
+                                <div class="state-graph">
+                                    <div id="header-chart-2" data-colors='["--bs-info"]'></div>
+                                    <div class="info">Item Sold 1230</div>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+
+                </div>
+            </div>
+ 
+<div class="row">
+    <div class="table-responsive col-lg-12  col-md-10 col-sm-10">
+        <table class="table table-hover ">
+            <thead>
+              <tr>
+                <th scope="col">Sl no.</th>
+                <th scope="col">  </th>
+                <th scope="col">name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phno</th>
+                <th scope="col">Address</th>
+              </tr>
+            </thead>
+            <tbody>
+    
+            <% result.forEach(function(emp, index){ %>
+    <% console.log(emp) %>
+    <form action="/theseEmployees" method="post">
+        
+              <tr>
+            <th scope="row"><%= index + 1 %></th>
+            <td>    <input type="checkbox" name="add" value= <%= emp.employeeID %> id=""> </td>
+            <td> <%= emp.name %> </td>
+            <td><%= emp.email %></td>
+            <td><%= emp.phoneno %></td>
+            <td style="width: 40%;" > <%= emp.address %> </td>
+            <!-- <td> <form  action="/fleetManagement" method="post"> <input style="display: none;" name="reqDriver"  value= <%= emp.id %>> <button class="btn btn-info p-2"   type="submit"> Assign </button> </form> </td> -->
+          </tr>
+     <% }) %>
+            </tbody>
+          </table>
+    
+          <button type="submit" >Done</button>
+        </form>
+        </div>
+</div>
+
+        </div>
+
+        <%- include("partials/footer") -%>

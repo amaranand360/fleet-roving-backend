@@ -191,29 +191,29 @@ function initMap() {
 
 setInterval(() => {
   
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
+  // navigator.geolocation.getCurrentPosition(
+  //   (position) => {
       
-      const pos = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      };
+  //     const pos = {
+  //       lat: position.coords.latitude,
+  //       lng: position.coords.longitude,
+  //     };
       
-      console.log( pos.lat);
-      console.log(pos.lng  );
    
-    },
+  //   },
 
-  );
+  // );
 
+  console.log(":::::::::::::::::::");
+  console.log(sloc);
+  console.log("::::::::::::::::::");
 
-
+  const markers = [];
  
-    navigator.geolocation.getCurrentPosition(
-    (position) => {
+ 
       const pos = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
+        lat: sloc[0][0].lat,
+        lng: sloc[0][0].lng,
       };
 
       const posy = JSON.stringify(pos);
@@ -224,16 +224,56 @@ var values = Object.values(obj);
       //   console.log(pos.lng  );
         // liveCordinates.push(pos);
         console.log(liveCordinates);
+const ic = "images/cab.png";
+
+        function addMarker(position) {
         const marker = new google.maps.Marker({
     position: pos,
+    icon: ic,
     map: map,
+    
   });
+  
+  marker.setPosition(p);
+var heading = google.maps.geometry.spherical.computeHeading(12.8872565997058,66.6401411027);
+icon.rotation = heading;
+marker.setIcon(icon);
+  markers.push(marker)
+}
+
+
+
+function setMapOnAll(map) {
+  for (let i = 0; i < markers.length; i++) {
+    markers[i].setMap(map);
+  }
+}
+
+
+  function hideMarkers() {
+  setMapOnAll(null);
+}
+  function deleteMarkers() {
+  hideMarkers();
+
+}
+
+
+setInterval(() => {
+  addMarker()
+}, 2000);
+
+setInterval(() => {
+  deleteMarkers()
+}, 2500);
+
+
         liveCordinates.push(JSON.stringify(values));
       console.log(JSON.stringify(liveCordinates) + "//////////////////////////////////");
        
-    },
+    
 
-  );
+  
 
 
 
@@ -283,7 +323,8 @@ var values = Object.values(obj);
 
 
 
-  console.log(liveCordinates + "\n \n \n");
+
+
   
       // Store snapped polyline returned by the snap-to-road service.
       function processSnapToRoadResponse(data) {
@@ -373,15 +414,6 @@ window.initMap = initMap;
 
   
 
-console.log(latlngsocket + "666");
-
-socket.on("hh", ( livec) =>{
-
-      console.log(livec + "380");
-
-
-      // res.render("track", {latlngsocket:obj});  
-    });
 
 
 
@@ -399,7 +431,22 @@ socket.on("hh", ( livec) =>{
 
         <script>
               var socket = io();
-            
+const posit= [];
+const sloc = [];
+socket.on("fromserver", (singleCrdn,livecl) => {
+  console.log(singleCrdn);
+  
+  console.log(livecl);
+sloc[0] =singleCrdn ;
+  if (posit.findIndex === 0 ) {
+    posit.push(JSON.stringify(livecl));
+  } else {
+    posit.push(JSON.stringify(singleCrdn));
+  }
+
+
+});
+
         </script>
   </head>
 

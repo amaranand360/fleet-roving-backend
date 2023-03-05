@@ -80,14 +80,23 @@
     <div class="col-lg-3">  <h6>Driver email</h6><p><%= reqDriver.email %></p></div>
     <div class="col-lg-3">  <h6>Driver phone num</h6><%= reqDriver.phoneno %></p></div>
 
-<div class="col-lg-6"> <h6>Driver Vehicle type</h6><p><%= reqDriver.vehType %></p></div>
+<div class="col-lg-6"> <h6>Driver Vehicle type</h6><p><%= reqDriver.VehDetails[0].vehType %></p></div>
 </div>
 
 </div>
 <br>
   
 
-  
+  <div>
+<form action="/addEmpToFleet" method="post">
+  <input type="text" name="presenrDriverID" value=<%= reqDriver.driverID %> >
+  <input type="text" name="presenrDriverName" value=<%= reqDriver.name %> >
+  <input type="text" name="presenrDriverVehType" value=<%= reqDriver.VehDetails[0].vehType %> >    
+  <button type="submit">
+        Add employees
+      </button>
+</form>
+  </div>
 
 
               </div>
@@ -98,23 +107,20 @@
                 <div class="col-lg-3">
                     <label for="pickUp"> Add pick up address: </label>
                     <input id="pac-input" class="input-group-text form-control" type="text" name="pickUp" placeholder="Pick Up"></div>
-                <br>
-                <div class="col-lg-3">  
-                    <label for="drop"> Add drop address: </label>
-                    <input id="pac-input1" class="input-group-text form-control" type="text" name="drop" placeholder="Drop"></div>
-               
-            </div>    
-            
-          
+                    <br>
+                    <div class="col-lg-3">  
+                      <label for="drop"> Add drop address: </label>
+                    <input id="pac-input1" class="input-group-text form-control" type="text" name="drop" placeholder="Drop"></div>      
+                              </div>    
+                      
             <input type="text" id="pickUpLatLng" style="display: none;" name="pickUpLatLng" class="input-group-text"  value= "">
             <input type="text" id="dropLatLng" style="display: none;" name="dropLatLng" class="input-group-text"  value= "">
-
             <input type="text" style="display: none;" name="driverId" class="input-group-text"  value= <%= reqDriver._id %>>
           
           
           
             <div id="infowindow-content">
-                <span id="place-name" class="title"></span><br />
+                <span id="place-name" class="title"></span><br/>
                 <span id="place-address"></span>
               </div>   
                   <div id="map"></div>

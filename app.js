@@ -15,6 +15,7 @@ const bcrypt = require('bcrypt');
 const findOrCreate = require('mongoose-findorcreate');
 const axios = require('axios');
 const randomId  = require('random-id');
+const { isTypedArray } = require('util/types');
 const app = express();
 const port = process.env.PORT;
 const server = require("http").createServer(app);
@@ -150,7 +151,8 @@ function ls(){
   User.findOne({ username: username },   function (err, user) {
 
     console.log(user);
-    console.log("5555555");  
+
+
     const hashedPassword = user.password;
 
 
@@ -786,8 +788,11 @@ Driver.findOneAndUpdate({"trips._id": tripId },{$set:{"trips.$.Status":"On-going
 })
 
 
-
-
+const livecl = [];
+const singleCrdn = [{
+  "name":"John",
+  "age":30
+  }];
 
 io.on("connection", (socket) => {
   console.log(socket.id);
@@ -796,13 +801,32 @@ io.on("connection", (socket) => {
 
   socket.on("gg", (obj, livec) =>{
     // console.log(obj);
-    console.log("\n 5555555555 \n");
-    console.log(livec);
-    
-   
+    // console.log(livec);
+    // console.log("\n 800 \n");
+    singleCrdn == obj;
+    livecl.push(obj)
+    singleCrdn.push(obj)
+    singleCrdn.shift();
+    console.log(singleCrdn);
+});
+
   });
 
-});
+
+
+
+  
+  io.on("connection", (socket) => {
+    console.log(socket.id);
+    console.log("Socket II is active to be connected");
+    console.log();
+  
+setInterval(() => {
+  socket.emit("fromserver", singleCrdn,livecl);   
+}, 3500);
+  
+    });
+
 
  
 
@@ -837,9 +861,41 @@ console.log(tripID);
 Driver.findOne({"trips._id":tripID },{ 'trips.$': 1 },(err, result)=>{
 
   res.render("track", {result:result});
-})
+});
+
+});
+
+
+
+app.post("/addEmpToFleet", (req, res)=>{
+  Employee.find({},(err, result)=>{
+    res.render("empWaiting", {result:result});
+  })
+});
+
+app.post("/theseEmployees", (req, res)=>{
+console.log(req.body.add[0]);
+
+// declare an array and store the received values in it 
+// and by using a foreach loop find each elements data and send it to fleetMAnagement page
+
+// add trip to DB after optimizing the direction of the location 
+
+
+Employee.find({})
+
+res.render("fleetManagement", {
 
 })
+
+});
+
+
+
+app.get("empWaiting",(req,res)=>{
+  res.render("empWaiting");
+})
+
 
   
   app.post('/login', passport.authenticate('local', {
