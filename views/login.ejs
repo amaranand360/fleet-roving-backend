@@ -18,128 +18,92 @@
         .async-hide {
             opacity: 0 !important
         }
+        body, html{
+            border: 0 !important;
+        }
+        .login{
+            margin-top: 5%;
+            width: 60%;
+        }
+        .logo-div{
+            height: 13%;
+            width: 13%;
+        }
+        .btn{
+            background:  #6E2495 ;
+            opacity: 1 ;
+            backdrop-filter: blur( 20px );
+            -webkit-backdrop-filter: blur( 20px );
+            border-radius: 20px;
+            border: 1px solid #43165c;
+            color: white;        
+            }
+            .btn:hover{
+            background:  #6E2495 ;
+            opacity: 1 ;
+            box-shadow: 0 8px 10px 0 rgba(67, 22, 92, 0.5) !important;
+            border-radius: 20px;
+            border: 1px solid #43165c;
+            color: white;        
+            }
+            
     </style>
 
 
 
 </head>
   <body>
-    
-    <div class="container position-sticky z-index-sticky top-0">
-        <div class="row">
-            <div class="col-12">
+ 
+    <nav style="background-color: #6E2495;" class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid" style="flex-wrap: nowrap; justify-content: space-between; align-items: center;">
+     <div >
+        <img class="logo-div" src="images/logo.png" alt="">
+     </div>
+          <div class="collapse navbar-collapse" id="navbarScroll">
+            <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+            
+             
+            </ul>
+          
+          </div>
+ 
+            <h3 style="color: aliceblue; float: right; margin: 0;"> FLEET ROVING </h3>
+ 
+        </div>
+      </nav>
 
-                <nav class="navbar navbar-expand-lg blur blur-rounded top-0 z-index-3 shadow position-absolute my-3 py-2 start-0 end-0 mx-4">
-                    <div class="container-fluid pe-0">
-                        <a class="navbar-brand font-weight-bolder ms-lg-0 ms-3 " href="../pages/dashboard.html">
-User Login
-</a>
 
 
-                    </div>
-                </nav>
 
+
+    <div class="container-fluid position-sticky z-index-sticky top-0 login">
+        <div class="row" style="flex-wrap: wrap; align-items:center;" > 
+        <h2>Welcome to fleetroving</h2>
+        
+            <div class="col-lg-6">
+                <div  class="card-body" >
+                    <h4 class="mb-5">Login to your account</h4>
+                    <form role="form" method="post" action="/login">
+                        <label>Email</label>
+                        <div class="mb-3">
+                            <input name="username" type="email" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="email-addon">
+                        </div>
+                        <label>Password</label>
+                        <div class="mb-3">
+                            <input name="password" type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="password-addon">
+                        </div>
+                        <div class="text-center">
+                            <button type="submit"  class="btn  w-100 mt-4 mb-0">Sign in</button>
+                        </div>
+                    </form>
+                </div>
             </div>
+            <div  class="col-lg-6">
+                <img style="height: 80%; width: 80%; float: right;" src="images/login.svg" alt="">
+            </div>
+
         </div>
     </div>
-    <main class="main-content  mt-0">
-        <section>
-            <div class="page-header min-vh-75">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-xl-4 col-lg-5 col-md-6 d-flex flex-column mx-auto">
-                            <div class="card card-plain mt-8">
-                                <div class="card-header pb-0 text-left bg-transparent">
-                                    <h3 class="font-weight-bolder text-info text-gradient">Welcome back</h3>
-                                    <p class="mb-0">Enter your email and password to sign in</p>
-                                </div>
-                                <div class="card-body">
-                                    <form role="form" method="post" action="/login">
-                                        <label>Email</label>
-                                        <div class="mb-3">
-                                            <input name="username" type="email" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="email-addon">
-                                        </div>
-                                        <label>Password</label>
-                                        <div class="mb-3">
-                                            <input name="password" type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="password-addon">
-                                        </div>
-                                        <div class="text-center">
-                                            <button type="submit"  class="btn bg-gradient-info w-100 mt-4 mb-0">Sign in</button>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="card-footer text-center pt-0 px-lg-2 px-1">
-                                    <p class="mb-4 text-sm mx-auto">
-                                    
-                                        <a href="javascript:;" class="text-info text-gradient font-weight-bold"></a>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="oblique position-absolute top-0 h-100 d-md-block d-none me-n8">
-                                <div class="oblique-image adminlog-bg bg-cover position-absolute fixed-top ms-auto h-100 z-index-0 ms-n6" ></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="footer py-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 mb-4 mx-auto text-center">
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-Company
-</a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-About Us
-</a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-Team
-</a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-Products
-</a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-Blog
-</a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
-Pricing
-</a>
-                </div>
-                <div class="col-lg-8 mx-auto text-center mb-4 mt-2">
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-4 me-4">
-<span class="text-lg fab fa-dribbble"></span>
-</a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-4 me-4">
-<span class="text-lg fab fa-twitter"></span>
-</a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-4 me-4">
-<span class="text-lg fab fa-instagram"></span>
-</a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-4 me-4">
-<span class="text-lg fab fa-pinterest"></span>
-</a>
-                    <a href="javascript:;" target="_blank" class="text-secondary me-xl-4 me-4">
-<span class="text-lg fab fa-github"></span>
-</a>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-8 mx-auto text-center mt-1">
-                    <p class="mb-0 text-secondary">
-                        Copyright ©
-                        <script>
-                            document.write(new Date().getFullYear())
-                        </script> Soft by Creative Tim.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </footer>
 
 
     

@@ -874,21 +874,38 @@ app.post("/addEmpToFleet", (req, res)=>{
 });
 
 app.post("/theseEmployees", (req, res)=>{
-console.log(req.body.add[0]);
+console.log(req.body.add);
 
 // declare an array and store the received values in it 
 // and by using a foreach loop find each elements data and send it to fleetMAnagement page
 
 // add trip to DB after optimizing the direction of the location 
 
+const selectedEmp = req.body.add;
+const reqD = [req.user.userID];
+console.log();
+console.log("//");
+console.log(selectedEmp);
 
-Employee.find({})
+Driver.findOne({"adminID" : reqD}, (err, reqDriver)=>{
 
-res.render("fleetManagement", {
+  console.log(reqDriver);
 
+Employee.find({"employeeID": {$in: selectedEmp}}, (err, selectedEmpDetails)=>{
+  console.log("::::::::::::::");
+  console.log(selectedEmpDetails);
 })
 
-});
+  res.render("fleetManagement", {
+    reqDriver:reqDriver, selectedEmp:selectedEmp
+  })
+  
+  });
+  
+})
+
+
+
 
 
 

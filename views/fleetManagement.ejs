@@ -89,9 +89,9 @@
 
   <div>
 <form action="/addEmpToFleet" method="post">
-  <input type="text" name="presenrDriverID" value=<%= reqDriver.driverID %> >
-  <input type="text" name="presenrDriverName" value=<%= reqDriver.name %> >
-  <input type="text" name="presenrDriverVehType" value=<%= reqDriver.VehDetails[0].vehType %> >    
+  <input type="text" style="display: none;" name="presenrDriverID" value=<%= reqDriver.driverID %> >
+  <input type="text" name="presenrDriverName" style="display: none;" value=<%= reqDriver.name %> >
+  <input type="text" name="presenrDriverVehType" style="display: none;" value=<%= reqDriver.VehDetails[0].vehType %> >    
   <button type="submit">
         Add employees
       </button>
@@ -128,6 +128,10 @@
                 
                 </div>          
                 <br>
+   
+
+                <input type="text" id="selectedEmp" value=<%= selectedEmp %> >
+                <p> <%= selectedEmp %> </p>
                 <button type="submit" class="btn btn-primary"> Create </button>    
         
                 </form>
@@ -136,7 +140,7 @@
         </div>
 
 <script>
-
+     if (selectedEmp = undefined) { document.getElementById("selectedEmp").innerHTML = "";  }
 console.log(reqDriver);
 
 function initMap() {
