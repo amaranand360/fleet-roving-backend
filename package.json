@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
@@ -27,5 +28,14 @@
     "socket.io-client": "^4.5.3",
     "uuid": "^9.0.0"
   },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/THARUN00001/flet_management_system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/THARUN00001/flet_management_system/issues"
+  },
+  "homepage": "https://github.com/THARUN00001/flet_management_system#readme",
   "description": ""
 }
