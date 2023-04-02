@@ -929,7 +929,7 @@ app.get("/log", (req, res)=>{
     res.redirect('/fleetDashboard');
   }else if (role === "Employee"){
     res.redirect("/employeeDashboard");
-  }
+  }``
 })
 
 
