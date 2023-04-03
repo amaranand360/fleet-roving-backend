@@ -302,7 +302,7 @@ console.log(req.isAuthenticated + "adminDAshboard");
 app.get('/logout', function(req, res, next){
   req.logout(function(err) {
     if (err) { return next(err); }
-    res.redirect('/login');
+    res.redirect('/login'); 
   });
 });
 
@@ -929,7 +929,7 @@ app.get("/log", (req, res)=>{
     res.redirect('/fleetDashboard');
   }else if (role === "Employee"){
     res.redirect("/employeeDashboard");
-  }
+  }``
 })
 
 
