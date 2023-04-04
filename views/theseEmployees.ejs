@@ -68,8 +68,9 @@
               <div class="col-lg-10 card-body">
 
 
-    
-  <h6>Driver name</h6>  <span> <%= reqDriver.name %> </span>
+
+  
+                <h6>Driver name</h6>  <span> <%= reqDriver.name %> </span>
   
   <br>
 
@@ -81,74 +82,35 @@
     <div class="col-lg-3">  <h6>Driver phone num</h6><%= reqDriver.phoneno %></p></div>
 
 <div class="col-lg-6"> <h6>Driver Vehicle type</h6><p><%= reqDriver.VehDetails[0].vehType %></p></div>
+
 </div>
-
-
 
 </div>
 <br>
   
 
   <div>
-<!-- <form action="/addEmpToFleet" method="post">
-  <input type="text" style="display: none;" name="presenrDriverID" value=<%= reqDriver.driverID %> >
-  <input type="text" name="presenrDriverName" style="display: none;" value=<%= reqDriver.name %> >
-  <input type="text" name="presenrDriverVehType" style="display: none;" value=<%= reqDriver.VehDetails[0].vehType %> >    
-          
-  
- 
-  <button type="submit">
-        Add employees
-      </button>
-</form> -->
+<form action="/addEmpToFleet" method="post">
+
+</form>
   </div>
 
 
               </div>
               <div class="col-lg- card-body">
-                <form  action="/addDriverTask" method="post">
+                <form  action="/dTask" method="post">
              <div class="form-group">
-           
-              <div class="row">
-                <div class="table-responsive col-lg-12  col-md-10 col-sm-10">
-                    <table class="table table-hover ">
-                        <thead>
-                          <tr>
-                            <th scope="col">Sl no.</th>
-                            <th scope="col">  </th>
-                            <th scope="col">name</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Phno</th>
-                            <th scope="col">Address</th>
-                          </tr>
-                        </thead>
-                        <tbody>
+            <div class="row">
+
+                <input type="text" style="display: none;" name="presentDriverID" value=<%= reqDriver.driverID %> >
+                <input type="text" name="presentDriverName" style="display: none;" value=<%= reqDriver.name %> >
+                <input type="text" name="presentDriverVehType" style="display: none;" value=<%= reqDriver.VehDetails[0].vehType %> >    
                 
-                        <% result.forEach(function(emp, index){ %>
-                <% console.log(emp) %>
-              
-                    
-                          <tr>
-                        <th scope="row"><%= index + 1 %></th>
-                        <td>    <input type="checkbox" name="add" value= <%= emp.employeeID %> id=""> </td>
-                        <td> <%= emp.name %> </td>
-                        <td><%= emp.email %></td>
-                        <td><%= emp.phoneno %></td>
-                        <td style="width: 40%;" > <%= emp.address %> </td>
-                        <!-- <td> <form  action="/fleetManagement" method="post"> <input style="display: none;" name="reqDriver"  value= <%= emp.id %>> <button class="btn btn-info p-2"   type="submit"> Assign </button> </form> </td> -->
-                      </tr>
-                 <% }) %>
-                        </tbody>
-                      </table>
-                
-                    
-              
-                    </div>
-              </div>
-           
-           
-              <div class="row">
-              
+                <h6 id="selectedEmpDetailsP">  <%= selectedEmpDetails %>   </h6>
+                <% const se = [selectedEmpDetails] %>
+                <input   id="selectedEmpDetailsI"  name="selectedEmps" value=<%= se %>>
+
+          
                 <div class="col-lg-3">
                     <label for="pickUp"> Add pick up address: </label>
                     <input id="pac-input" class="input-group-text form-control" type="text" name="pickUp" placeholder="Pick Up"></div>
@@ -186,13 +148,8 @@
 
 <script>
      
-     document.getElementById("selectedEmp").value = "";
-
-     if (document.getElementById("selectedEmp").value = undefined) {
-      
-     } else {
-      
-     }
+const vvv = document.getElementById('selectedEmpDetailsP').innerHTML;
+     document.getElementById("selectedEmpDetailsI").value =  document.getElementById('selectedEmpDetailsP').innerHTML ; 
 
 
 

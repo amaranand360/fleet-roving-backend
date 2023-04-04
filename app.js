@@ -20,6 +20,7 @@ const app = express();
 const port = process.env.PORT;
 const server = require("http").createServer(app);
 const nodemailer = require("nodemailer");
+const { type } = require('os');
 
 
 const io = require("socket.io")(server, {
@@ -73,7 +74,27 @@ const loginSchema= new mongoose.Schema({
  
   });
 
+  
+  const VehDetails = new mongoose.Schema({
+    vehType: String,
+    vehNum: String,
+    PassengerCapacity: Number
+  })
+
+const boardingEmp = new mongoose.Schema({
+emp : {
+  employeeID: String,
+  name : String,
+  email: String,
+  phoneno: String,
+  address: String,
+  cordinates:String 
+}
+
+});
+
   const trips = new mongoose.Schema({
+    tripID: String,
     pickup: String,
     drop: String,
     pickUpLatLng: String,
@@ -83,15 +104,12 @@ const loginSchema= new mongoose.Schema({
     },
     Status:{
       type: String, default: "Incomplete"
-    }
+    },
+    boardingEmp: [boardingEmp]
 
   })
 
-  const VehDetails = new mongoose.Schema({
-    vehType: String,
-    vehNum: String,
-    PassengerCapacity: Number
-  })
+
 
   const driverdata = new mongoose.Schema({
     driverID: {
@@ -101,8 +119,8 @@ const loginSchema= new mongoose.Schema({
     email: String,
     phoneno: String,
     VehDetails: [VehDetails],
-    trips: [trips]
-
+    trips: [trips],
+    
   });
 
   const employeedata = new mongoose.Schema({
@@ -187,31 +205,86 @@ setTimeout(ls, 500)
 
 
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  auth: {
-    user: 'fleetroving@gmail.com',
-    pass: "pjleezcvmkfkumkf"
-  },
-});
+// const transporter = nodemailer.createTransport({
+//   host: 'smtp.gmail.com',
+//   port: 587,
+//   auth: {
+//     user: 'fleetroving@gmail.com',
+//     pass: "pjleezcvmkfkumkf"
+//   },
+// });
 
-var mailOptions = {
-  from: 'fleetroving@gmail.com',
-  to: 'bpatharun@gmail.com',
-  subject: 'Sending Email using Node.js',
-  text: 'That was easy!'
+// var mailOptions = {
+//   from: 'fleetroving@gmail.com',
+//   to: 'bpatharun@gmail.com',
+//   subject: 'Sending Email using Node.js',
+//   text: 'That was easy!'
+// };
+
+// transporter.sendMail(mailOptions, function(error, info){
+//   if (error) {
+//     console.log(error);
+//   } else {
+//     console.log('Email sent: ' + info.response);
+//   }
+// });
+
+
+app.post("/dTask", (req, res)=>{
+
+
+
+  console.log("********************");
+const trip = req.body
+console.log(trip);
+// const yy = JSON.stringify(req.body.selectedEmps)
+// const gg = yy;
+// console.log(typeof(gg));
+// console.log(gg);
+const qr = "trips.boardingEmp.employees";
+
+const DriverTask = req.body;
+  
+const Dpickup = DriverTask.pickUp;
+const Ddrop = DriverTask.drop;
+const DpickUpLatLng = DriverTask.pickUpLatLng;
+const DdropLatLng = DriverTask.dropLatLng;
+const D = [];
+console.log(DpickUpLatLng);
+var config = {
+  method: 'get',
+  url: 'https://maps.googleapis.com/maps/api/distancematrix/json?origins=Washington%2C%20DC&destinations=New%20York%20City%2C%20NY&units=imperial&key='+process.env.API_KEY,
+  headers: { }
 };
 
-transporter.sendMail(mailOptions, function(error, info){
-  if (error) {
-    console.log(error);
-  } else {
-    console.log('Email sent: ' + info.response);
-  }
+
+ axios(config)
+.then(function (response) {
+
 });
 
 
+
+Driver.findOneAndUpdate({"_id" : DriverTask.driverId}, 
+{ $push: {
+  "trips": {
+    "pickup": Dpickup,
+    "drop": Ddrop,
+    "pickUpLatLng": DpickUpLatLng,
+    "dropLatLng": DdropLatLng,   
+    "boardingEmp": trip.selectedEmps
+  }
+  }
+},{new: true, upsert: true }).exec();
+
+
+  Driver.findOneAndUpdate({driverID:trip.presentDriverID}, { 
+    $push : {"trips.boardingEmp.employees" : trip.selectedEmps
+    } } ,{new: true, upsert: true }).exec();
+
+res.redirect("/fleets");
+
+})
 
 
 
@@ -372,22 +445,28 @@ io.on("connection", (socket) => {
 
 
 app.post("/fleetManagement",(req, res)=>{
-  
+
 const requestedDriverID = req.body.reqDriver ;
+
+Employee.find({},(err, result)=>{
 
 
 Driver.findOne({_id: requestedDriverID}  , function(err, requestedDriverResult){
 
     res.render("fleetManagement", {
-      reqDriver:requestedDriverResult
+      reqDriver:requestedDriverResult,result:result
       });
     });
 });
-
+});
 
 
 app.post("/addDriverTask", (req, res)=>{
+  const len = process.env.ID_LENGTH;
+  const pattern = process.env.ID_PATTERN;
+  const id = randomId(len, pattern);
     const DriverTask = req.body;
+    console.log(DriverTask);
   
     const Dpickup = DriverTask.pickUp;
     const Ddrop = DriverTask.drop;
@@ -412,6 +491,7 @@ console.log(DpickUpLatLng);
     Driver.findOneAndUpdate({"_id" : DriverTask.driverId}, 
     { $push: {
       "trips": {
+        "tripID" : id,
         "pickup": Dpickup,
         "drop": Ddrop,
         "pickUpLatLng": DpickUpLatLng,
@@ -419,6 +499,61 @@ console.log(DpickUpLatLng);
       }
       }
     },{new: true, upsert: true }).exec();
+
+
+    
+    Employee.find({"employeeID": {$in: DriverTask.add}}, (err, selectedEmpDetails)=>{
+      console.log("::::::::::::::");
+      console.log(selectedEmpDetails);
+      console.log(id);
+
+    selectedEmpDetails.forEach(element => {
+      console.log("DDDDDDDDDDDDDDDDDDDDDD");
+      console.log(element.name);
+      console.log(DriverTask.driverId);
+      console.log("DDDDDDDDDDDDDDDDDDDDDD");
+
+      Driver.findOne({ "_id" : DriverTask.driverId },(err, res)=>{
+       console.log( "========================");
+       console.log(res.trips);
+        const gv = res.trips; 
+        gv.forEach(element => {
+          if (element.tripID === id) {
+            console.log(element);
+            addSelEmp(element)
+          }
+        });
+      })
+
+//  use and operator and find specific task     
+
+function addSelEmp(element) {
+  Driver.findOneAndUpdate({"_id" : DriverTask.driverId}, { 
+    $push : {"boardingEmp" :{
+      "employeeID": element.employeeID,
+      "name" : element.name,
+      "boardingEmp.email": element.email,
+      "boardingEmp.phoneno": element.phoneno,
+      "boardingEmp.address": element.address,
+      "boardingEmp.cordinates":element.cordinates 
+    }
+    } } ,{new: true, upsert: true }).exec();
+}
+
+        // Driver.findOneAndUpdate({"_id" : DriverTask.driverId}, { 
+        //   $push : {"boardingEmp.employees" : element
+        //   } } ,{new: true, upsert: true }).exec();
+
+    });
+
+    })
+
+
+
+    
+
+
+
 
  res.redirect("/fleets");
 });
@@ -913,6 +1048,9 @@ console.log();
 console.log("//");
 console.log(selectedEmp);
 
+
+
+
 Driver.findOne({"adminID" : reqD}, (err, reqDriver)=>{
 
   console.log(reqDriver);
@@ -920,11 +1058,13 @@ Driver.findOne({"adminID" : reqD}, (err, reqDriver)=>{
 Employee.find({"employeeID": {$in: selectedEmp}}, (err, selectedEmpDetails)=>{
   console.log("::::::::::::::");
   console.log(selectedEmpDetails);
+  console.log();
+  res.render("theseEmployees", {
+     selectedEmpDetails:selectedEmpDetails,reqDriver:reqDriver
+  })
 })
 
-  res.render("fleetManagement", {
-    reqDriver:reqDriver, selectedEmp:selectedEmp
-  })
+
   
   });
   
