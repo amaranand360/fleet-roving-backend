@@ -19,6 +19,8 @@ const { isTypedArray } = require('util/types');
 const app = express();
 const port = process.env.PORT;
 const server = require("http").createServer(app);
+const nodemailer = require("nodemailer");
+
 
 const io = require("socket.io")(server, {
   cors: {
@@ -184,6 +186,30 @@ setTimeout(ls, 500)
 ));
 
 
+
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 587,
+  auth: {
+    user: 'fleetroving@gmail.com',
+    pass: "pjleezcvmkfkumkf"
+  },
+});
+
+var mailOptions = {
+  from: 'fleetroving@gmail.com',
+  to: 'bpatharun@gmail.com',
+  subject: 'Sending Email using Node.js',
+  text: 'That was easy!'
+};
+
+transporter.sendMail(mailOptions, function(error, info){
+  if (error) {
+    console.log(error);
+  } else {
+    console.log('Email sent: ' + info.response);
+  }
+});
 
 
 
