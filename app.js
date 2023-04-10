@@ -53,20 +53,27 @@ mongoose.connect( process.env.MONGO_URL , {useNewUrlParser: true}).then(() => {
 
 const loginSchema= new mongoose.Schema({
   userID: {
+    unique: true,
     type: String, default:"" 
   },
   role: {
     type: String, default:"" 
   },
-    username:String,
-    password:String
+  username: {
+      unique: true,
+      type: String, default:"" 
+    },
+    passwordHash: {
+      type: String, default:"" 
+    },
 
   });
   
 
   const admindata = new mongoose.Schema({
     adminID: {
-      type: String, default:"" 
+      type: String, default:"" ,
+      unique:true
     },
     name: String,
     email: String,
@@ -98,21 +105,30 @@ const boardingEmp = new mongoose.Schema({
     drop: String,
     pickUpLatLng: String,
     dropLatLng: String,
-    distance: {
+    distance : {
       type: Number, default:0 
     },
-    Status:{
+    Status :{
       type: String, default: "Incomplete"
+    },
+    billAmount : {
+      type: Number, default:0 
+    },
+    billStatus :{
+      type: String, default: "Pending"
     },
     boardingEmp: [boardingEmp]
 
   })
 
-
+  // Pending
+  // processing
+  // settled
 
   const driverdata = new mongoose.Schema({
     driverID: {
-      type: String, default:"" 
+      type: String, default:"" ,
+      unique:true
     },
     name: String,
     email: String,
@@ -122,15 +138,28 @@ const boardingEmp = new mongoose.Schema({
     
   });
 
+
+  const empTrips = new mongoose.Schema({
+    tripID: String,
+    driverID: String,
+    driverName: String,
+    driverNum: String,
+    vehNum: String,
+    pickUpCords: String,
+  });
+
+
   const employeedata = new mongoose.Schema({
     employeeID: {
-      type: String, default:"" 
+      type: String, default:"" ,
+      unique:true
     },
     name: String,
     email: String,
     phoneno: String,
     address:String,
-    cordinates:String
+    cordinates:String,
+    empTrips: [empTrips]
 
   });
 
@@ -172,29 +201,36 @@ function ls(){
     console.log(user);
 
 
-    const hashedPassword = user.password;
+    const hashedPassword = user.passwordHash;
 
+    console.log(password);
+
+    console.log(user.hash);
 
 
     function verifyPassword() {
       bcrypt.compare(password, hashedPassword, (err, result)=>{
         console.log(result + " res");
-        if (err) {
+        if (result === false) {
           console.log(err);
+          done(null, false, { message: 'Incorrect email.' });
+        } else{
+          console.log("Authed");
+          return done(null, user);
         }
        });  
     }
 
     console.log(verifyPassword()  + "SCSACSA");
 
-          return done(null, user);
+  
     
      
      
      });
 }
 
-setTimeout(ls, 500)
+setTimeout(ls, 500);
 
 
 
@@ -305,6 +341,7 @@ res.redirect("/fleets");
 app.get("/", (req, res)=>{
    res.render("home")
 });
+
 
 app.get("/fleets", (req,res)=>{
 
@@ -602,6 +639,24 @@ Driver.findOne({"_id" : DriverTask.driverId}, (err, dr)=>{
     }
   }  );
 
+
+ 
+
+
+Employee.findOneAndUpdate({"employeeID": element.employeeID},{
+  $push:{
+    "empTrips":{
+      tripID: id,
+      driverID: dr.driverID,
+      driverName: dr.name,
+      driverNum: dr.phoneno,
+      vehNum: dr.VehDetails[0].vehNum,
+      pickUpCords: element.cordinates
+    }
+  }
+},{new: true, upsert: true }).exec();
+
+
   console.log("{}{}{}{}{}{}");
   console.log(dr.driverID);
 
@@ -613,14 +668,6 @@ Driver.findOne({"_id" : DriverTask.driverId}, (err, dr)=>{
       console.log(element.name);
       console.log(DriverTask.driverId);
       console.log("DDDDDDDDDDDDDDDDDDDDDD");
-
-
-
-
-        Driver.findOne({"trips.tripID":id },{ 'trips.$': 1 } ,(err, result)=>{
-        console.log(result);
-        console.log("616");
-        })
 
 
     });
@@ -674,6 +721,8 @@ app.post("/DriverTaskAccepted", (req, res)=>{
   const currentTaskId = req.body.taskId;
 // const f = trips._id;
 // console.log(currentTaskId);
+
+console.log(req.body);
 
 
 
@@ -730,6 +779,16 @@ app.post("/addAdmin", function (req, res) {
     const pattern = process.env.ID_PATTERN;
     const id = randomId(len, pattern);
 
+    
+    function wait(ms){
+      var start = new Date().getTime();
+      var end = start;
+      while(end < start + ms) {
+        end = new Date().getTime();
+     }
+   }
+
+
 
     User.register({ username: req.body.username }, req.body.password, function (err, client) {
       if (err) {
@@ -738,20 +797,53 @@ app.post("/addAdmin", function (req, res) {
       }
       else {
 
-        const saltRounds = process.env.NO_OF_SALT_ROUNDS;
-        const myPlaintextPassword = req.body.password;
-console.log( saltRounds);
-console.log(myPlaintextPassword);
+        const pass = {key: null};
 
-        bcrypt.genSalt(saltRounds, function (err, salt) {
-          bcrypt.hash(myPlaintextPassword, salt, function (err, hash) {
-            console.log(hash);
-            User.findOneAndUpdate({ "username": req.body.username },
-            { userID: id, role: req.body.role, password: hash }, { new: true, upsert: true }).exec();
-            console.log(hash + "hash");
-          }); 
-             
-        });
+        function genPassword () {
+         bcrypt.genSalt(10, (err, salt) => {
+          console.log(salt);
+          console.log("987");
+          bcrypt.hash(req.body.password, salt, function(err, hash) {
+            console.log(hash  + " in 946 ");
+            pass.key = hash;
+            User.findOneAndUpdate({"username" :req.body.username}, 
+            {  "$set":{
+              passwordHash: hash
+            } },{new: true, upsert: true }).exec().then(
+              console.log("password stored in DB")
+            );
+            
+          });
+          })
+      }
+
+
+        genPassword()
+
+
+
+
+     
+         User.findOneAndUpdate({"username" :req.body.username}, 
+        { userID: id, role: req.body.role,},{new: true, upsert: true }).exec();
+
+
+        
+// passport.use(new LocalStrategy(
+//   function(username, password, done) {
+//     User.findOne({ username: username }, function(err, user) {
+//       if (err) { return done(err); }
+//       if (!user) { return done(null, false); }
+//       bcrypt.compare(password, user.passwordHash, function(err, res) {
+//         if (res) {
+//           return done(null, user);
+//         } else {
+//           return done(null, false);
+//         }
+//       });
+//     });
+//   }
+// ));
 
 
       }
@@ -796,8 +888,14 @@ console.log(myPlaintextPassword);
   });
 
 
+  
 
-
+app.get("/empPrevTrips", (req, res)=>{
+    Employee.find({"EmployeeID": req.user.userID}, (err, emp)=>{
+    console.log(emp[0].empTrips);
+    res.render("empPrevTrips", {trips:emp[0].empTrips });
+  });
+});
 
   
 app.post("/addEmp", function (req, res) {
@@ -815,20 +913,35 @@ app.post("/addEmp", function (req, res) {
     }
     else {
 
-      const saltRounds = process.env.NO_OF_SALT_ROUNDS;
-      const myPlaintextPassword = req.body.password;
-console.log( saltRounds);
-console.log(myPlaintextPassword);
+        const pass = {key: null};
 
-      bcrypt.genSalt(saltRounds, function (err, salt) {
-        bcrypt.hash(myPlaintextPassword, salt, function (err, hash) {
-          console.log(hash);
-          User.findOneAndUpdate({ "username": req.body.username },
-          { userID: id, role: req.body.role, password: hash }, { new: true, upsert: true }).exec();
-          console.log(hash + "hash");
-        }); 
-           
-      });
+        function genPassword () {
+         bcrypt.genSalt(10, (err, salt) => {
+          console.log(salt);
+          console.log("987");
+          bcrypt.hash(req.body.password, salt, function(err, hash) {
+            console.log(hash  + " in 946 ");
+            pass.key = hash;
+            User.findOneAndUpdate({"username" :req.body.username}, 
+            {  "$set":{
+              passwordHash: hash
+            } },{new: true, upsert: true }).exec().then(
+              console.log("password stored in DB")
+            );
+            
+          });
+          })
+      }
+
+
+        genPassword()
+
+
+
+
+     
+         User.findOneAndUpdate({"username" :req.body.username}, 
+        { userID: id, role: req.body.role,},{new: true, upsert: true }).exec();
 
 
     }
@@ -881,7 +994,30 @@ console.log(myPlaintextPassword);
 
 
 
+app.get("/fleetBilling", (req, res)=>{
+  Driver.find({}, (err, driverResult)=>{
+    
+    const d = driverResult;
+    // console.log(d);
+    res.render("fleetBilling", {fleet:d});
+  });
+  
+});
 
+app.post("/doBill",(req, res)=>{
+
+  const requestedDriverID = req.body.reqDriver ;
+  
+
+  
+  
+  Driver.aggregate( [{ $match : { billStatus: "Pending"} }]  , function(err, requestedDriverResult){
+      // res.render("fleetManagement", {
+      //   trips:requestedDriverResult.trips
+      //   });
+      console.log(requestedDriverResult);
+      });
+  });
 
 
 
@@ -914,13 +1050,17 @@ app.post("/addFleet", (req,res)=>{
 
         function genPassword () {
          bcrypt.genSalt(10, (err, salt) => {
+          console.log(salt);
+          console.log("987");
           bcrypt.hash(req.body.password, salt, function(err, hash) {
-            console.log(hash  + " in 484 ");
+            console.log(hash  + " in 946 ");
             pass.key = hash;
-            // User.findOneAndUpdate({"username" :req.body.username}, 
-            // {  password: hash },{new: true, upsert: true }).exec().then(
-            //   console.log("password stored in DB")
-            // );
+            User.findOneAndUpdate({"username" :req.body.username}, 
+            {  "$set":{
+              passwordHash: hash
+            } },{new: true, upsert: true }).exec().then(
+              console.log("password stored in DB")
+            );
             
           });
           })
@@ -934,7 +1074,7 @@ app.post("/addFleet", (req,res)=>{
 
      
          User.findOneAndUpdate({"username" :req.body.username}, 
-        { userID: id, role: req.body.role, password: pass.key},{new: true, upsert: true }).exec();
+        { userID: id, role: req.body.role,},{new: true, upsert: true }).exec();
         
     
         console.log("[[[[[]]]]]]]]]]]]]]")
@@ -1007,15 +1147,38 @@ app.post("/addFleet", (req,res)=>{
 app.post("/start", (req,res)=>{
 
 
-
+console.log(req.body);
 
 const driverId = req.user.userID;
 const status = req.body.tripStatus;
 const tripId = mongoose.Types.ObjectId(req.body.tripId.trim()); ;
 
+
 console.log( driverId + "\n" + status + "\n" + tripId + " \n" );
   
-Driver.findOneAndUpdate({"trips._id": tripId },{$set:{"trips.$.Status":"On-going"}}, (err, rrr)=>{
+Driver.findOneAndUpdate({"trips._id": tripId },{$set:{"trips.$.Status":"On-going","trips.$.distance": req.body.distance }}, (err, rrr)=>{
+
+});
+
+Driver.findOne({driverID: driverId}, (err, fltRes)=>{
+
+  let thisFare = 0;
+
+  if (fltRes.VehDetails[0].vehType === "SUV" ) {
+     thisFare = 20;
+  } else if (fltRes.VehDetails[0].vehType === "MINI") {
+     thisFare = 16;
+  }
+
+  const totalBill = req.body.distance * thisFare;
+  console.log("total bill is" + totalBill);
+   
+Driver.findOneAndUpdate({"trips._id": tripId },{$set:{"trips.$.billAmount": totalBill ,"trips.$.billStatus": "Pending" }}, (err, rrrr)=>{
+
+
+  
+
+});
 
 });
 
@@ -1025,7 +1188,33 @@ Driver.findOneAndUpdate({"trips._id": tripId },{$set:{"trips.$.Status":"On-going
 // }});
 
 
-})
+});
+
+
+app.post("/end", (req,res)=>{
+
+
+  console.log(req.body);
+  
+  const driverId = req.user.userID;
+  const status = req.body.tripStatus;
+  const tripId = mongoose.Types.ObjectId(req.body.tripId.trim()); ;
+  
+  console.log( driverId + "\n" + status + "\n" + tripId + " \n" );
+    
+  Driver.findOneAndUpdate({"trips._id": tripId },{$set:{"trips.$.Status":"Completed","trips.$.distance": req.body.distance }}, (err, rrr)=>{
+  res.redirect("/fleetDashboard");
+  });
+  
+  
+  // Driver.findOneAndUpdate({ "trips._id":  tripId }, {$set: {
+  //   "trips[0].Status": status
+  // }});
+  
+  
+  });
+
+
 
 
 const livecl = [];

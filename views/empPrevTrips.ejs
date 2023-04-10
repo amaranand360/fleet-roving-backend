@@ -15,7 +15,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
               <ul class="navbar-nav">
                 <li class="nav-item active">
-                  <a class="nav-link"  href="/empPrevTrips">My tasks </a>
+                  <a class="nav-link"  href="/driverTasks">My tasks </a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link " style="position:absolute ;right: 10px;" href="/logout">Sign-out</a>
@@ -24,56 +24,29 @@
             </div>
           </nav>
 
+          <div class="container-fluid">
+    
+                  <div style="justify-content: center; margin-top: 10%;" class="row">
+    <div class="col-lg-8">
+        
+      
+      
+      <% trips.forEach(element => { %>
 
-
-    <div class="m-5" style="display: flex; justify-content: center;">
-        <div class="card" style="width: 90%;">
-        <div class="card-header"   style="height: 250px; width: 100%;   background-position: center; background-repeat: no-repeat; 
-        background-size: cover ; background-image: url(https://img.freepik.com/free-vector/black-background-with-focus-spot-light_1017-27230.jpg?size=626&ext=jpg&uid=R87923467);">
-          <center><h1 style="color: rgb(255, 255, 255) ; padding-top: 100px;"> Welcome Onboard, <span style="font-size:25px;"><%=empresult.name%></span>  </h1></center>
-        </div> 
-  
-        <br>
-        <div class="card-body" style="">
-
-
-
-            
-
-            <p>Employee ID: <span >  #<%= empresult.employeeID %> </span> </p>
-            <br>
-            <h4>Employee Details</h4>
-            <br>
-            <h6>
-                Name: <span style="font-size:15px; font-weight: 500;" ><%=empresult.name%></span>
-            </h6>
-            <br>
-            <h6>
-                Mail-Id: <span><%=empresult.email %> </span>
-            </h6>
-            <br>
-            <h6>
-                Phone-no: <span><%=empresult.phoneno %></span>
-            </h6>
-<br>
-            <h6>
-                Address: <span><%=empresult.address%></span>
-            </h6>
-            
-
-          </div>  
+        <div style="background-color: rgb(174, 173, 173); margin: 5px;">
+          <h6> Name: <span> <%= element.tripID %> </span> </h6>
         </div>
-           
-          </div>
+        
+      <%  }); %>
+
+    
+
+</div>
+        </div>
+
     </div>
+          
 
-
-
-
-        <!-- end main content-->
-
-    </div>
-    <!-- END layout-wrapper -->
 
     <!-- Right Sidebar -->
     <div class="right-bar">
