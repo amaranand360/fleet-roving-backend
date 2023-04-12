@@ -20,6 +20,7 @@ const app = express();
 const port = process.env.PORT;
 const server = require("http").createServer(app);
 const nodemailer = require("nodemailer");
+const Handlebars = require("handlebars");
 //Required package
 const pdf = require("pdf-creator-node");
 const fs = require("fs");
@@ -590,38 +591,38 @@ console.log(DpickUpLatLng);
 Driver.findOne({"_id" : DriverTask.driverId}, (err, dr)=>{
 
 
-  // const data =  
-  //   {
-  //    DriverName: dr.name,
-  //    DriverID: dr.driverID,
-  //    DriverPhoneNo: dr.phoneno,
-  //    tripID:  id,
-  //    empName: element.name
-  //   }
+  const data =  
+    {
+     DriverName: dr.name,
+     DriverID: dr.driverID,
+     DriverPhoneNo: dr.phoneno,
+     tripID:  id,
+     empName: element.name
+    }
      
 
-  //    ejs.renderFile(templatePath, data, (err, html) => {
-  //     if (err) {
-  //       console.error(err);
-  //     } else {
+     ejs.renderFile(templatePath, data, (err, html) => {
+      if (err) {
+        console.error(err);
+      } else {
     
-  //       // Email message options
-  //   const mailOptions = {
-  //   from: 'fleetroving@gmail.com',
-  //   to: element.email,
-  //   subject: 'Fleet assaigned',
-  //   html: html
-  //       };
+        // Email message options
+    const mailOptions = {
+    from: 'fleetroving@gmail.com',
+    to: element.email,
+    subject: 'Fleet assaigned',
+    html: html
+        };
 
-  // transporter.sendMail(mailOptions, function(error, info){
-  //   if (error) {
-  //     console.log(error);
-  //   } else {
-  //     console.log('Email sent: ' + info.response);
-  //   }
-  // });
-  //     }
-  //   });
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
+      }
+    });
 
 
 
@@ -1038,7 +1039,7 @@ app.post("/doBill",(req, res)=>{
 
 
 
-console.log(requestedDriverResult[0].trips);
+// console.log(requestedDriverResult[0].trips);
 
 
 
@@ -1053,13 +1054,18 @@ console.log("//////////////////");
         }
       });
 
-      console.log(driverBill);
-const rest = driverBill;
+      // const template = Handlebars.compile("<p>Bill amount: {{this.billAmount}}</p>", { allowProtoPropertiesByDefault: true });
+      // const context = { billAmount: 100 };
+      // const html = template(context);
+
+console.log(driverBill);
+console.log("??????????????????///////////////////?????????????????????");
+
       const document = {
         html : html,
         path: "./output.pdf",
         type: "",
-        data: rest
+        data: {driverBill}
       };
 
   
@@ -1078,7 +1084,8 @@ const rest = driverBill;
             default: '<span style="color: #444;"> 55 </span>/<span> 777 </span>', // fallback value
             last: 'Last Page'
         }
-    }
+    },
+    
   };
 
 
@@ -1277,7 +1284,7 @@ app.post("/end", (req,res)=>{
   
   console.log( driverId + "\n" + status + "\n" + tripId + " \n" );
     
-  Driver.findOneAndUpdate({"trips._id": tripId },{$set:{"trips.$.Status":"Completed","trips.$.distance": req.body.distance }}, (err, rrr)=>{
+  Driver.findOneAndUpdate({"trips._id": tripId },{$set:{"trips.$.Status":"Completed" }}, (err, rrr)=>{
   res.redirect("/fleetDashboard");
   });
   
