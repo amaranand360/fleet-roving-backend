@@ -20,6 +20,12 @@ const app = express();
 const port = process.env.PORT;
 const server = require("http").createServer(app);
 const nodemailer = require("nodemailer");
+//Required package
+const pdf = require("pdf-creator-node");
+const fs = require("fs");
+
+// Read HTML Template
+const html = fs.readFileSync("template.html", "utf8");
 const { type } = require('os');
 
 
@@ -30,7 +36,10 @@ const io = require("socket.io")(server, {
 });
 
 app.use(express.static(__dirname + "/assets/"));
+
+
 app.set('view engine', 'ejs');
+
 app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(session({
@@ -1004,22 +1013,88 @@ app.get("/fleetBilling", (req, res)=>{
   
 });
 
+app.get("/contactUs",(req, res)=>{
+  res.render("contactUs");
+})
+
+app.get("/subscribe",(req, res)=>{
+  res.render("subscribe");
+})
+
+
+
 app.post("/doBill",(req, res)=>{
 
   const requestedDriverID = req.body.reqDriver ;
   
-
   
   
-  Driver.aggregate( [{ $match : { billStatus: "Pending"} }]  , function(err, requestedDriverResult){
+  
+  
+  Driver.find( {"trips.billStatus": "Pending"}  , function(err, requestedDriverResult){
       // res.render("fleetManagement", {
       //   trips:requestedDriverResult.trips
       //   });
-      console.log(requestedDriverResult);
+
+
+
+console.log(requestedDriverResult[0].trips);
+
+
+
+
+console.log("//////////////////");
+    const driverBill = [];
+    const resp = requestedDriverResult[0].trips
+      resp.forEach(element => {
+        if (element.billStatus === "Pending") {
+          driverBill.push(element)
+
+        }
+      });
+
+      console.log(driverBill);
+const rest = driverBill;
+      const document = {
+        html : html,
+        path: "./output.pdf",
+        type: "",
+        data: rest
+      };
+
+  
+  const options = {
+    format: "A4",
+    orientation: "portrait",
+    border: "10mm",
+    header: {
+        height: "45mm",
+        contents: '<div style="text-align: center;">Author: Shyam Hajare</div>'
+    },
+    footer: {
+        height: "28mm",
+        contents: {
+            first: 'Cover page',
+            default: '<span style="color: #444;"> 55 </span>/<span> 777 </span>', // fallback value
+            last: 'Last Page'
+        }
+    }
+  };
+
+
+
+      pdf
+      .create(document, options)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
       });
   });
 
-
+  
 
 
 
