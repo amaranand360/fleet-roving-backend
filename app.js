@@ -22,11 +22,12 @@ const server = require("http").createServer(app);
 const nodemailer = require("nodemailer");
 const Handlebars = require("handlebars");
 //Required package
-const pdf = require("pdf-creator-node");
+// const pdf = require("pdf-creator-node");
 const fs = require("fs");
-
+const pdf = require("html-pdf");
+const path = require("path");
 // Read HTML Template
-const html = fs.readFileSync("template.html", "utf8");
+const template = fs.readFileSync("template.ejs", "utf8");
 const { type } = require('os');
 
 
@@ -606,21 +607,25 @@ Driver.findOne({"_id" : DriverTask.driverId}, (err, dr)=>{
         console.error(err);
       } else {
     
-        // Email message options
-    const mailOptions = {
-    from: 'fleetroving@gmail.com',
-    to: element.email,
-    subject: 'Fleet assaigned',
-    html: html
-        };
+     // MAIL comment
+    
+  //    const mailOptions = {
+  //   from: 'fleetroving@gmail.com',
+  //   to: element.email,
+  //   subject: 'Fleet assaigned',
+  //   html: html
+  //       };
 
-  transporter.sendMail(mailOptions, function(error, info){
-    if (error) {
-      console.log(error);
-    } else {
-      console.log('Email sent: ' + info.response);
-    }
-  });
+  // transporter.sendMail(mailOptions, function(error, info){
+  //   if (error) {
+  //     console.log(error);
+  //   } else {
+  //     console.log('Email sent: ' + info.response);
+  //   }
+  // });
+
+
+
       }
     });
 
@@ -1022,17 +1027,21 @@ app.get("/subscribe",(req, res)=>{
   res.render("subscribe");
 })
 
+app.get("/template",(req, res)=>{
+  res.render("template");
+})
+
 
 
 app.post("/doBill",(req, res)=>{
 
   const requestedDriverID = req.body.reqDriver ;
   
+  console.log(requestedDriverID);
   
   
   
-  
-  Driver.find( {"trips.billStatus": "Pending"}  , function(err, requestedDriverResult){
+  Driver.find( {_id: requestedDriverID}  , function(err, requestedDriverResult){
       // res.render("fleetManagement", {
       //   trips:requestedDriverResult.trips
       //   });
@@ -1045,11 +1054,12 @@ app.post("/doBill",(req, res)=>{
 
 
 console.log("//////////////////");
-    const driverBill = [];
-    const resp = requestedDriverResult[0].trips
-      resp.forEach(element => {
+    const driverBill = requestedDriverResult[0];
+    const tripDetails = requestedDriverResult[0].trips
+    const pendingBills= [] ;
+    tripDetails.forEach(element => {
         if (element.billStatus === "Pending") {
-          driverBill.push(element)
+          pendingBills.push(element)
 
         }
       });
@@ -1057,47 +1067,106 @@ console.log("//////////////////");
       // const template = Handlebars.compile("<p>Bill amount: {{this.billAmount}}</p>", { allowProtoPropertiesByDefault: true });
       // const context = { billAmount: 100 };
       // const html = template(context);
+  //     const driverBillz = driverBill.filter(element => element.billStatus === "Pending").map(({ billAmount, billStatus }) => ({ billAmount, billStatus }));
 
-console.log(driverBill);
-console.log("??????????????????///////////////////?????????????????????");
+      console.log(pendingBills);
 
-      const document = {
-        html : html,
-        path: "./output.pdf",
-        type: "",
-        data: {driverBill}
-      };
+  //     const document = {
+  //       html : html,
+  //       path: "./output.pdf",
+  //       type: "",
+  //       data: {driverBillz},
+  //       handlebars: {
+  //         runtimeOptions: {
+  //           allowProtoPropertiesByDefault: true,
+  //           allowProtoMethodsByDefault: true,
+  //         },
+  //       },
+  //     };
 
   
-  const options = {
-    format: "A4",
-    orientation: "portrait",
-    border: "10mm",
-    header: {
-        height: "45mm",
-        contents: '<div style="text-align: center;">Author: Shyam Hajare</div>'
-    },
-    footer: {
-        height: "28mm",
-        contents: {
-            first: 'Cover page',
-            default: '<span style="color: #444;"> 55 </span>/<span> 777 </span>', // fallback value
-            last: 'Last Page'
-        }
-    },
+  // const options = {
+  //   format: "A4",
+  //   orientation: "portrait",
+  //   border: "10mm",
+  //   header: {
+  //       height: "45mm",
+  //       contents: '<div style="text-align: center;">Author: Shyam Hajare</div>'
+  //   },
+  //   footer: {
+  //       height: "28mm",
+  //       contents: {
+  //           first: 'Cover page',
+  //           default: '<span style="color: #444;"> 55 </span>/<span> 777 </span>', // fallback value
+  //           last: 'Last Page'
+  //       }
+  //   },
     
-  };
+  // };
 
 
 
-      pdf
-      .create(document, options)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  //     pdf
+  //     .create(document, options)
+  //     .then((res) => {
+  //       console.log(res);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+
+
+
+  ejs.renderFile('views/template.ejs', {driverBill:driverBill, pendingBills:pendingBills}, (err, html) => {
+    if (err) {
+      console.log("ERROR:");
+      console.error(err);
+      return;
+    }
+  
+
+
+    const options = { format: 'Letter',
+    "width": "8.5in", };
+    pdf.create(html, options).toFile('./report.pdf', (err, res) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      console.log(res);
+    });
+
+
+    // MAIL comment
+
+    // const mailOptions = {
+    //   from: 'fleetroving@gmail.com',
+    //   to: driverBill.email,
+    //   subject: 'Bill Generated',
+    //   attachments: [{
+    //     filename: 'report.pdf',
+    //     path: 'D:/WEB DEVELOPMENT/projects/fleet_management/report.pdf',
+    //     contentType: 'application/pdf'
+    //   }],
+    //       };
+  
+    // transporter.sendMail(mailOptions, function(error, info){
+    //   if (error) {
+    //     console.log(error);
+    //   } else {
+    //     console.log('Email sent: ' + info.response);
+    //   }
+    // });
+
+
+  });
+  
+  
+
+
+  
+  res.render("template", {driverBill:driverBill, pendingBills:pendingBills});
+
       });
   });
 
