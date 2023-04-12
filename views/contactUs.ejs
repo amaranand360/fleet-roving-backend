@@ -1,0 +1,136 @@
+<%- include("partials/header") -%>
+
+
+
+<style>
+body{
+    background-color: #ffffff;
+}
+.contact{
+    padding: 4%;
+    height: 400px;
+}
+.col-md-3{
+    background: black;
+    padding: 4%;
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+}
+.contact-info{
+    margin-top:10%;
+}
+.contact-info img{
+    margin-bottom: 15%;
+}
+.contact-info h2{
+    margin-bottom: 10%;
+}
+.col-md-9{
+    background: #fff;
+    padding: 3%;
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+}
+.contact-form label{
+    font-weight:600;
+}
+.contact-form button{
+    background: #568D99;
+    color: #fff;
+    font-weight: 600;
+    width: 25%;
+}
+.contact-form button:focus{
+    box-shadow:none;
+}
+.login{
+            margin-top: 5%;
+            width: 60%;
+        }
+        .logo-div{
+            height: 13%;
+            width: 13%;
+        }
+
+</style>
+
+<body>
+  
+    <nav style="background-color: #6E2495;" class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid" style="flex-wrap: nowrap; justify-content: space-between; align-items: center;">
+     <div >
+        <img class="logo-div" src="../assets/images/logo.png" alt="">
+     </div>
+          <div class="collapse navbar-collapse" id="navbarScroll">
+            <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+            
+             
+            </ul>
+          
+          </div>
+ 
+<h1></h1>
+ 
+        </div>
+      </nav>
+
+
+
+
+  <div class="container-fluid position-sticky z-index-sticky top-0 login">
+    <div class="row" style="flex-wrap: wrap; align-items:center;" > 
+
+    
+
+
+
+
+<div class="container contact">
+	<div class="row">
+		<div class="col-md-3">
+			<div class="contact-info">
+				<img src="https://image.ibb.co/kUASdV/contact-image.png" alt="image"/>
+				<h2 style="color: #fff;">Contact Us</h2>
+				<h4 style="color: #fff;">We would love to hear from you !</h4>
+			</div>
+		</div>
+		<div class="col-md-9">
+			<div class="contact-form">
+				<div class="form-group">
+				  <label class="control-label col-sm-2" for="fname">Name:</label>
+				  <div class="col-sm-10">          
+					<input type="text" class="form-control" id="fname" placeholder="Enter Your Name" name="fname">
+				  </div>
+				</div>
+				<div class="form-group">
+				  <label class="control-label col-sm-2" for="lname">User Id:</label>
+				  <div class="col-sm-10">          
+					<input type="text" class="form-control" id="lname" placeholder="Enter Employee Id" name="lname">
+				  </div>
+				</div>
+				<div class="form-group">
+				  <label class="control-label col-sm-2" for="email">Email:</label>
+				  <div class="col-sm-10">
+					<input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+				  </div>
+				</div>
+				<div class="form-group">
+				  <label class="control-label col-sm-2" for="comment">Your Query:</label>
+				  <div class="col-sm-10">
+					<textarea class="form-control" rows="5" id="comment"></textarea>
+				  </div>
+				</div>
+				<div class="form-group">        
+				  <div class="col-sm-offset-2 col-sm-10">
+                    <a href="" class="btn btn-primary btn-rounded">Submit</a>				  </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</div>
+<div class="rightbar-overlay"></div>
+
+
+<%- include("partials/footer") -%>

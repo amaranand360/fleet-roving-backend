@@ -19,6 +19,15 @@ const { isTypedArray } = require('util/types');
 const app = express();
 const port = process.env.PORT;
 const server = require("http").createServer(app);
+const nodemailer = require("nodemailer");
+//Required package
+const pdf = require("pdf-creator-node");
+const fs = require("fs");
+
+// Read HTML Template
+const html = fs.readFileSync("template.html", "utf8");
+const { type } = require('os');
+
 
 const io = require("socket.io")(server, {
   cors: {
@@ -27,7 +36,10 @@ const io = require("socket.io")(server, {
 });
 
 app.use(express.static(__dirname + "/assets/"));
+
+
 app.set('view engine', 'ejs');
+
 app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(session({
@@ -50,20 +62,27 @@ mongoose.connect( process.env.MONGO_URL , {useNewUrlParser: true}).then(() => {
 
 const loginSchema= new mongoose.Schema({
   userID: {
+    unique: true,
     type: String, default:"" 
   },
   role: {
     type: String, default:"" 
   },
-    username:String,
-    password:String
+  username: {
+      unique: true,
+      type: String, default:"" 
+    },
+    passwordHash: {
+      type: String, default:"" 
+    },
 
   });
   
 
   const admindata = new mongoose.Schema({
     adminID: {
-      type: String, default:"" 
+      type: String, default:"" ,
+      unique:true
     },
     name: String,
     email: String,
@@ -71,47 +90,85 @@ const loginSchema= new mongoose.Schema({
  
   });
 
-  const trips = new mongoose.Schema({
-    pickup: String,
-    drop: String,
-    pickUpLatLng: String,
-    dropLatLng: String,
-    distance: {
-      type: Number, default:0 
-    },
-    Status:{
-      type: String, default: "Incomplete"
-    }
-
-  })
-
+  
   const VehDetails = new mongoose.Schema({
     vehType: String,
     vehNum: String,
     PassengerCapacity: Number
   })
 
+const boardingEmp = new mongoose.Schema({
+  employeeID: String,
+  name : String,
+  email: String,
+  phoneno: String,
+  address: String,
+  cordinates:String 
+
+
+});
+
+  const trips = new mongoose.Schema({
+    tripID: String,
+    pickup: String,
+    drop: String,
+    pickUpLatLng: String,
+    dropLatLng: String,
+    distance : {
+      type: Number, default:0 
+    },
+    Status :{
+      type: String, default: "Incomplete"
+    },
+    billAmount : {
+      type: Number, default:0 
+    },
+    billStatus :{
+      type: String, default: "Pending"
+    },
+    boardingEmp: [boardingEmp]
+
+  })
+
+  // Pending
+  // processing
+  // settled
+
   const driverdata = new mongoose.Schema({
     driverID: {
-      type: String, default:"" 
+      type: String, default:"" ,
+      unique:true
     },
     name: String,
     email: String,
     phoneno: String,
     VehDetails: [VehDetails],
-    trips: [trips]
-
+    trips: [trips],
+    
   });
+
+
+  const empTrips = new mongoose.Schema({
+    tripID: String,
+    driverID: String,
+    driverName: String,
+    driverNum: String,
+    vehNum: String,
+    pickUpCords: String,
+  });
+
 
   const employeedata = new mongoose.Schema({
     employeeID: {
-      type: String, default:"" 
+      type: String, default:"" ,
+      unique:true
     },
     name: String,
     email: String,
     phoneno: String,
     address:String,
-    cordinates:String
+    cordinates:String,
+    empTrips: [empTrips]
 
   });
 
@@ -153,29 +210,36 @@ function ls(){
     console.log(user);
 
 
-    const hashedPassword = user.password;
+    const hashedPassword = user.passwordHash;
 
+    console.log(password);
+
+    console.log(user.hash);
 
 
     function verifyPassword() {
       bcrypt.compare(password, hashedPassword, (err, result)=>{
         console.log(result + " res");
-        if (err) {
+        if (result === false) {
           console.log(err);
+          done(null, false, { message: 'Incorrect email.' });
+        } else{
+          console.log("Authed");
+          return done(null, user);
         }
        });  
     }
 
     console.log(verifyPassword()  + "SCSACSA");
 
-          return done(null, user);
+  
     
      
      
      });
 }
 
-setTimeout(ls, 500)
+setTimeout(ls, 500);
 
 
 
@@ -185,13 +249,108 @@ setTimeout(ls, 500)
 
 
 
+// const transporter = nodemailer.createTransport({
+//   host: 'smtp.gmail.com',
+//   port: 587,
+//   auth: {
+//     user: 'fleetroving@gmail.com',
+//     pass: "pjleezcvmkfkumkf"
+//   },
+// });
+    
+// var mailOptions = {
+//   from: 'fleetroving@gmail.com',
+//   to: 'anjumafsana05@gmail.com',
+//   subject: 'Sending Email using Node.js',
+//   text: 'Hey! How r u??'
+// };
+    
+// transporter.sendMail(mailOptions, function(error, info){
+//   if (error) {
+//     console.log(error);
+//   } else {
+//     console.log('Email sent: ' + info.response);
+//   }
+// });
 
+
+const templatePath = "views/bookingEmailTemplate.ejs";
+
+
+app.post("/dTask", (req, res)=>{
+
+
+
+  console.log("********************");
+const trip = req.body
+console.log(trip);
+// const yy = JSON.stringify(req.body.selectedEmps)
+// const gg = yy;
+// console.log(typeof(gg));
+// console.log(gg);
+const qr = "trips.boardingEmp.employees";
+
+const DriverTask = req.body;
+  
+const Dpickup = DriverTask.pickUp;
+const Ddrop = DriverTask.drop;
+const DpickUpLatLng = DriverTask.pickUpLatLng;
+const DdropLatLng = DriverTask.dropLatLng;
+const D = [];
+console.log(DpickUpLatLng);
+var config = {
+  method: 'get',
+  url: 'https://maps.googleapis.com/maps/api/distancematrix/json?origins=Washington%2C%20DC&destinations=New%20York%20City%2C%20NY&units=imperial&key='+process.env.API_KEY,
+  headers: { }
+};
+
+
+ axios(config)
+.then(function (response) {
+
+});
+
+
+
+Driver.findOneAndUpdate({"_id" : DriverTask.driverId}, 
+{ $push: {
+  "trips": {
+    "pickup": Dpickup,
+    "drop": Ddrop,
+    "pickUpLatLng": DpickUpLatLng,
+    "dropLatLng": DdropLatLng,   
+    "boardingEmp": trip.selectedEmps
+  }
+  }
+},{new: true, upsert: true }).exec();
+
+Driver.findOne({"trips.tripID":id },{ 'trips.$': 1 } ,(err, result)=>{
+console.log(result);
+});
+
+
+Driver.findOneAndUpdate( {"trips.tripID":id , 'trips.$': 1 } , { 
+  $push : {"trips.boardingEmp" :{
+    "emp.employeeID": element.employeeID,
+    "emp.name" : element.name,
+
+  }
+  } } ,{new: true}, {upsert: true }).exec();
+
+  Driver.findOneAndUpdate({"trips.tripID":id },{ 'trips.$': 1 }, { 
+    $push : {"trips.boardingEmp.employees" : trip.selectedEmps
+    } } ,{new: true, upsert: true }).exec();
+
+res.redirect("/fleets");
+
+})
 
 
 
 app.get("/", (req, res)=>{
    res.render("home")
 });
+
 
 app.get("/fleets", (req,res)=>{
 
@@ -346,22 +505,43 @@ io.on("connection", (socket) => {
 
 
 app.post("/fleetManagement",(req, res)=>{
-  
+
 const requestedDriverID = req.body.reqDriver ;
+
+Employee.find({},(err, result)=>{
 
 
 Driver.findOne({_id: requestedDriverID}  , function(err, requestedDriverResult){
 
     res.render("fleetManagement", {
-      reqDriver:requestedDriverResult
+      reqDriver:requestedDriverResult,result:result
       });
     });
+});
+});
+
+const smtpConfig = {
+  host: 'smtp.gmail.com',
+  port: 587,
+  auth: {
+    user: 'fleetroving@gmail.com',
+    pass: "pjleezcvmkfkumkf"
+  },
+};
+const transporter = nodemailer.createTransport(smtpConfig);
+
+app.get("/bookingEmailTemplate",(req, res)=>{
+  res.render("bookingEmailTemplate");
 });
 
 
 
 app.post("/addDriverTask", (req, res)=>{
+  const len = process.env.ID_LENGTH;
+  const pattern = process.env.ID_PATTERN;
+  const id = randomId(len, pattern);
     const DriverTask = req.body;
+    console.log(DriverTask);
   
     const Dpickup = DriverTask.pickUp;
     const Ddrop = DriverTask.drop;
@@ -383,9 +563,10 @@ console.log(DpickUpLatLng);
     
 
  
-    Driver.findOneAndUpdate({"_id" : DriverTask.driverId}, 
+    Driver.findOneAndUpdate({"_id" : DriverTask.driverId} , 
     { $push: {
       "trips": {
+        "tripID" : id,
         "pickup": Dpickup,
         "drop": Ddrop,
         "pickUpLatLng": DpickUpLatLng,
@@ -394,6 +575,121 @@ console.log(DpickUpLatLng);
       }
     },{new: true, upsert: true }).exec();
 
+
+    
+    Employee.find({"employeeID": {$in: DriverTask.add}}, (err, selectedEmpDetails)=>{
+      console.log("::::::::::::::");
+      console.log(selectedEmpDetails);
+      console.log(id);
+
+    selectedEmpDetails.forEach(element => {
+      console.log("DDDDDDDDDDDDDDDDDDDDDD");
+
+
+
+Driver.findOne({"_id" : DriverTask.driverId}, (err, dr)=>{
+
+
+  // const data =  
+  //   {
+  //    DriverName: dr.name,
+  //    DriverID: dr.driverID,
+  //    DriverPhoneNo: dr.phoneno,
+  //    tripID:  id,
+  //    empName: element.name
+  //   }
+     
+
+  //    ejs.renderFile(templatePath, data, (err, html) => {
+  //     if (err) {
+  //       console.error(err);
+  //     } else {
+    
+  //       // Email message options
+  //   const mailOptions = {
+  //   from: 'fleetroving@gmail.com',
+  //   to: element.email,
+  //   subject: 'Fleet assaigned',
+  //   html: html
+  //       };
+
+  // transporter.sendMail(mailOptions, function(error, info){
+  //   if (error) {
+  //     console.log(error);
+  //   } else {
+  //     console.log('Email sent: ' + info.response);
+  //   }
+  // });
+  //     }
+  //   });
+
+
+
+  Driver.findOneAndUpdate( { "driverID":dr.driverID, "trips.tripID": id }, {
+    $push:{
+        "trips.$[elem].boardingEmp" : [{   
+          employeeID: element.employeeID,
+          name : element.name,
+          email: element.email,
+          phoneno: element.phoneno,
+          address: element.address,
+          cordinates:element.address  }]
+    }
+  },{
+    new: true,
+    arrayFilters:[{
+      "elem.tripID": id
+    }]
+  }, function(err, result) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(result);
+    }
+  }  );
+
+
+ 
+
+
+Employee.findOneAndUpdate({"employeeID": element.employeeID},{
+  $push:{
+    "empTrips":{
+      tripID: id,
+      driverID: dr.driverID,
+      driverName: dr.name,
+      driverNum: dr.phoneno,
+      vehNum: dr.VehDetails[0].vehNum,
+      pickUpCords: element.cordinates
+    }
+  }
+},{new: true, upsert: true }).exec();
+
+
+  console.log("{}{}{}{}{}{}");
+  console.log(dr.driverID);
+
+}),
+    
+
+
+
+      console.log(element.name);
+      console.log(DriverTask.driverId);
+      console.log("DDDDDDDDDDDDDDDDDDDDDD");
+
+
+    });
+
+    })
+
+
+
+    
+
+
+
+ 
  res.redirect("/fleets");
 });
 
@@ -434,6 +730,8 @@ app.post("/DriverTaskAccepted", (req, res)=>{
   const currentTaskId = req.body.taskId;
 // const f = trips._id;
 // console.log(currentTaskId);
+
+console.log(req.body);
 
 
 
@@ -490,6 +788,16 @@ app.post("/addAdmin", function (req, res) {
     const pattern = process.env.ID_PATTERN;
     const id = randomId(len, pattern);
 
+    
+    function wait(ms){
+      var start = new Date().getTime();
+      var end = start;
+      while(end < start + ms) {
+        end = new Date().getTime();
+     }
+   }
+
+
 
     User.register({ username: req.body.username }, req.body.password, function (err, client) {
       if (err) {
@@ -498,20 +806,53 @@ app.post("/addAdmin", function (req, res) {
       }
       else {
 
-        const saltRounds = process.env.NO_OF_SALT_ROUNDS;
-        const myPlaintextPassword = req.body.password;
-console.log( saltRounds);
-console.log(myPlaintextPassword);
+        const pass = {key: null};
 
-        bcrypt.genSalt(saltRounds, function (err, salt) {
-          bcrypt.hash(myPlaintextPassword, salt, function (err, hash) {
-            console.log(hash);
-            User.findOneAndUpdate({ "username": req.body.username },
-            { userID: id, role: req.body.role, password: hash }, { new: true, upsert: true }).exec();
-            console.log(hash + "hash");
-          }); 
-             
-        });
+        function genPassword () {
+         bcrypt.genSalt(10, (err, salt) => {
+          console.log(salt);
+          console.log("987");
+          bcrypt.hash(req.body.password, salt, function(err, hash) {
+            console.log(hash  + " in 946 ");
+            pass.key = hash;
+            User.findOneAndUpdate({"username" :req.body.username}, 
+            {  "$set":{
+              passwordHash: hash
+            } },{new: true, upsert: true }).exec().then(
+              console.log("password stored in DB")
+            );
+            
+          });
+          })
+      }
+
+
+        genPassword()
+
+
+
+
+     
+         User.findOneAndUpdate({"username" :req.body.username}, 
+        { userID: id, role: req.body.role,},{new: true, upsert: true }).exec();
+
+
+        
+// passport.use(new LocalStrategy(
+//   function(username, password, done) {
+//     User.findOne({ username: username }, function(err, user) {
+//       if (err) { return done(err); }
+//       if (!user) { return done(null, false); }
+//       bcrypt.compare(password, user.passwordHash, function(err, res) {
+//         if (res) {
+//           return done(null, user);
+//         } else {
+//           return done(null, false);
+//         }
+//       });
+//     });
+//   }
+// ));
 
 
       }
@@ -556,8 +897,14 @@ console.log(myPlaintextPassword);
   });
 
 
+  
 
-
+app.get("/empPrevTrips", (req, res)=>{
+    Employee.find({"EmployeeID": req.user.userID}, (err, emp)=>{
+    console.log(emp[0].empTrips);
+    res.render("empPrevTrips", {trips:emp[0].empTrips });
+  });
+});
 
   
 app.post("/addEmp", function (req, res) {
@@ -575,20 +922,35 @@ app.post("/addEmp", function (req, res) {
     }
     else {
 
-      const saltRounds = process.env.NO_OF_SALT_ROUNDS;
-      const myPlaintextPassword = req.body.password;
-console.log( saltRounds);
-console.log(myPlaintextPassword);
+        const pass = {key: null};
 
-      bcrypt.genSalt(saltRounds, function (err, salt) {
-        bcrypt.hash(myPlaintextPassword, salt, function (err, hash) {
-          console.log(hash);
-          User.findOneAndUpdate({ "username": req.body.username },
-          { userID: id, role: req.body.role, password: hash }, { new: true, upsert: true }).exec();
-          console.log(hash + "hash");
-        }); 
-           
-      });
+        function genPassword () {
+         bcrypt.genSalt(10, (err, salt) => {
+          console.log(salt);
+          console.log("987");
+          bcrypt.hash(req.body.password, salt, function(err, hash) {
+            console.log(hash  + " in 946 ");
+            pass.key = hash;
+            User.findOneAndUpdate({"username" :req.body.username}, 
+            {  "$set":{
+              passwordHash: hash
+            } },{new: true, upsert: true }).exec().then(
+              console.log("password stored in DB")
+            );
+            
+          });
+          })
+      }
+
+
+        genPassword()
+
+
+
+
+     
+         User.findOneAndUpdate({"username" :req.body.username}, 
+        { userID: id, role: req.body.role,},{new: true, upsert: true }).exec();
 
 
     }
@@ -641,9 +1003,98 @@ console.log(myPlaintextPassword);
 
 
 
+app.get("/fleetBilling", (req, res)=>{
+  Driver.find({}, (err, driverResult)=>{
+    
+    const d = driverResult;
+    // console.log(d);
+    res.render("fleetBilling", {fleet:d});
+  });
+  
+});
+
+app.get("/contactUs",(req, res)=>{
+  res.render("contactUs");
+})
+
+app.get("/subscribe",(req, res)=>{
+  res.render("subscribe");
+})
 
 
 
+app.post("/doBill",(req, res)=>{
+
+  const requestedDriverID = req.body.reqDriver ;
+  
+  
+  
+  
+  
+  Driver.find( {"trips.billStatus": "Pending"}  , function(err, requestedDriverResult){
+      // res.render("fleetManagement", {
+      //   trips:requestedDriverResult.trips
+      //   });
+
+
+
+console.log(requestedDriverResult[0].trips);
+
+
+
+
+console.log("//////////////////");
+    const driverBill = [];
+    const resp = requestedDriverResult[0].trips
+      resp.forEach(element => {
+        if (element.billStatus === "Pending") {
+          driverBill.push(element)
+
+        }
+      });
+
+      console.log(driverBill);
+const rest = driverBill;
+      const document = {
+        html : html,
+        path: "./output.pdf",
+        type: "",
+        data: rest
+      };
+
+  
+  const options = {
+    format: "A4",
+    orientation: "portrait",
+    border: "10mm",
+    header: {
+        height: "45mm",
+        contents: '<div style="text-align: center;">Author: Shyam Hajare</div>'
+    },
+    footer: {
+        height: "28mm",
+        contents: {
+            first: 'Cover page',
+            default: '<span style="color: #444;"> 55 </span>/<span> 777 </span>', // fallback value
+            last: 'Last Page'
+        }
+    }
+  };
+
+
+
+      pdf
+      .create(document, options)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+      });
+  });
+
+  
 
 
 
@@ -674,13 +1125,17 @@ app.post("/addFleet", (req,res)=>{
 
         function genPassword () {
          bcrypt.genSalt(10, (err, salt) => {
+          console.log(salt);
+          console.log("987");
           bcrypt.hash(req.body.password, salt, function(err, hash) {
-            console.log(hash  + " in 484 ");
+            console.log(hash  + " in 946 ");
             pass.key = hash;
-            // User.findOneAndUpdate({"username" :req.body.username}, 
-            // {  password: hash },{new: true, upsert: true }).exec().then(
-            //   console.log("password stored in DB")
-            // );
+            User.findOneAndUpdate({"username" :req.body.username}, 
+            {  "$set":{
+              passwordHash: hash
+            } },{new: true, upsert: true }).exec().then(
+              console.log("password stored in DB")
+            );
             
           });
           })
@@ -694,7 +1149,7 @@ app.post("/addFleet", (req,res)=>{
 
      
          User.findOneAndUpdate({"username" :req.body.username}, 
-        { userID: id, role: req.body.role, password: pass.key},{new: true, upsert: true }).exec();
+        { userID: id, role: req.body.role,},{new: true, upsert: true }).exec();
         
     
         console.log("[[[[[]]]]]]]]]]]]]]")
@@ -767,15 +1222,38 @@ app.post("/addFleet", (req,res)=>{
 app.post("/start", (req,res)=>{
 
 
-
+console.log(req.body);
 
 const driverId = req.user.userID;
 const status = req.body.tripStatus;
 const tripId = mongoose.Types.ObjectId(req.body.tripId.trim()); ;
 
+
 console.log( driverId + "\n" + status + "\n" + tripId + " \n" );
   
-Driver.findOneAndUpdate({"trips._id": tripId },{$set:{"trips.$.Status":"On-going"}}, (err, rrr)=>{
+Driver.findOneAndUpdate({"trips._id": tripId },{$set:{"trips.$.Status":"On-going","trips.$.distance": req.body.distance }}, (err, rrr)=>{
+
+});
+
+Driver.findOne({driverID: driverId}, (err, fltRes)=>{
+
+  let thisFare = 0;
+
+  if (fltRes.VehDetails[0].vehType === "SUV" ) {
+     thisFare = 20;
+  } else if (fltRes.VehDetails[0].vehType === "MINI") {
+     thisFare = 16;
+  }
+
+  const totalBill = req.body.distance * thisFare;
+  console.log("total bill is" + totalBill);
+   
+Driver.findOneAndUpdate({"trips._id": tripId },{$set:{"trips.$.billAmount": totalBill ,"trips.$.billStatus": "Pending" }}, (err, rrrr)=>{
+
+
+  
+
+});
 
 });
 
@@ -785,7 +1263,33 @@ Driver.findOneAndUpdate({"trips._id": tripId },{$set:{"trips.$.Status":"On-going
 // }});
 
 
-})
+});
+
+
+app.post("/end", (req,res)=>{
+
+
+  console.log(req.body);
+  
+  const driverId = req.user.userID;
+  const status = req.body.tripStatus;
+  const tripId = mongoose.Types.ObjectId(req.body.tripId.trim()); ;
+  
+  console.log( driverId + "\n" + status + "\n" + tripId + " \n" );
+    
+  Driver.findOneAndUpdate({"trips._id": tripId },{$set:{"trips.$.Status":"Completed","trips.$.distance": req.body.distance }}, (err, rrr)=>{
+  res.redirect("/fleetDashboard");
+  });
+  
+  
+  // Driver.findOneAndUpdate({ "trips._id":  tripId }, {$set: {
+  //   "trips[0].Status": status
+  // }});
+  
+  
+  });
+
+
 
 
 const livecl = [];
@@ -858,7 +1362,7 @@ const driverID = req.body.reqDriver;
 const tripID = ObjectId(req.body.tripId);
 console.log(tripID);
 
-Driver.findOne({"trips._id":tripID },{ 'trips.$': 1 },(err, result)=>{
+Driver.findOne({"trips._id":tripID },{ 'trips.$': 1 } ,(err, result)=>{
 
   res.render("track", {result:result});
 });
@@ -887,6 +1391,9 @@ console.log();
 console.log("//");
 console.log(selectedEmp);
 
+
+
+
 Driver.findOne({"adminID" : reqD}, (err, reqDriver)=>{
 
   console.log(reqDriver);
@@ -894,11 +1401,13 @@ Driver.findOne({"adminID" : reqD}, (err, reqDriver)=>{
 Employee.find({"employeeID": {$in: selectedEmp}}, (err, selectedEmpDetails)=>{
   console.log("::::::::::::::");
   console.log(selectedEmpDetails);
+  console.log();
+  res.render("theseEmployees", {
+     selectedEmpDetails:selectedEmpDetails,reqDriver:reqDriver
+  })
 })
 
-  res.render("fleetManagement", {
-    reqDriver:reqDriver, selectedEmp:selectedEmp
-  })
+
   
   });
   

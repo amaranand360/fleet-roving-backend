@@ -83,19 +83,24 @@
 <div class="col-lg-6"> <h6>Driver Vehicle type</h6><p><%= reqDriver.VehDetails[0].vehType %></p></div>
 </div>
 
+
+
 </div>
 <br>
   
 
   <div>
-<form action="/addEmpToFleet" method="post">
+<!-- <form action="/addEmpToFleet" method="post">
   <input type="text" style="display: none;" name="presenrDriverID" value=<%= reqDriver.driverID %> >
   <input type="text" name="presenrDriverName" style="display: none;" value=<%= reqDriver.name %> >
   <input type="text" name="presenrDriverVehType" style="display: none;" value=<%= reqDriver.VehDetails[0].vehType %> >    
+          
+  
+ 
   <button type="submit">
         Add employees
       </button>
-</form>
+</form> -->
   </div>
 
 
@@ -103,7 +108,47 @@
               <div class="col-lg- card-body">
                 <form  action="/addDriverTask" method="post">
              <div class="form-group">
-            <div class="row">
+           
+              <div class="row">
+                <div class="table-responsive col-lg-12  col-md-10 col-sm-10">
+                    <table class="table table-hover ">
+                        <thead>
+                          <tr>
+                            <th scope="col">Sl no.</th>
+                            <th scope="col">  </th>
+                            <th scope="col">name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Phno</th>
+                            <th scope="col">Address</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                
+                        <% result.forEach(function(emp, index){ %>
+                <% console.log(emp) %>
+              
+                    
+                          <tr>
+                        <th scope="row"><%= index + 1 %></th>
+                        <td>    <input type="checkbox" name="add" value= <%= emp.employeeID %> id=""> </td>
+                        <td> <%= emp.name %> </td>
+                        <td><%= emp.email %></td>
+                        <td><%= emp.phoneno %></td>
+                        <td style="width: 40%;" > <%= emp.address %> </td>
+                        <!-- <td> <form  action="/fleetManagement" method="post"> <input style="display: none;" name="reqDriver"  value= <%= emp.id %>> <button class="btn btn-info p-2"   type="submit"> Assign </button> </form> </td> -->
+                      </tr>
+                 <% }) %>
+                        </tbody>
+                      </table>
+                
+                    
+              
+                    </div>
+              </div>
+           
+           
+              <div class="row">
+              
                 <div class="col-lg-3">
                     <label for="pickUp"> Add pick up address: </label>
                     <input id="pac-input" class="input-group-text form-control" type="text" name="pickUp" placeholder="Pick Up"></div>
@@ -111,12 +156,14 @@
                     <div class="col-lg-3">  
                       <label for="drop"> Add drop address: </label>
                     <input id="pac-input1" class="input-group-text form-control" type="text" name="drop" placeholder="Drop"></div>      
-                              </div>    
+                              </div>
+                            
                       
             <input type="text" id="pickUpLatLng" style="display: none;" name="pickUpLatLng" class="input-group-text"  value= "">
             <input type="text" id="dropLatLng" style="display: none;" name="dropLatLng" class="input-group-text"  value= "">
-            <input type="text" style="display: none;" name="driverId" class="input-group-text"  value= <%= reqDriver._id %>>
-          
+            <input type="text" style="display: none;" name="driverId" class="input-group-text"  value= <%= reqDriver._id %>
+
+
           
           
             <div id="infowindow-content">
@@ -138,8 +185,19 @@
         </div>
 
 <script>
-     if (selectedEmp = undefined) { document.getElementById("selectedEmp").innerHTML = "";  }
-console.log(reqDriver);
+     
+     document.getElementById("selectedEmp").value = "";
+
+     if (document.getElementById("selectedEmp").value = undefined) {
+      
+     } else {
+      
+     }
+
+
+
+
+     console.log(reqDriver);
 
 function initMap() {
   const map = new google.maps.Map(document.getElementById("map"), {

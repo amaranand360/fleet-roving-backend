@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Hello world!</title>
+  </head>
+  <body>
+   
+    <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">First</th>
+            <th scope="col">Last</th>
+            <th scope="col">Handle</th>
+          </tr>
+        </thead>
+        <tbody>
+
+           <%  driverBill.forEach(element => { %>
+            <tr>
+                <th scope="row">1</th>
+                <td><%= element.billAmount %> </td>
+                <td> <%= element.billStatus %> </td>
+              </tr>
+            
+         <%   }); %>
+
+        </tbody>
+      </table>
+
+  </body>
+</html>

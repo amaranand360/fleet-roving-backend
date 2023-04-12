@@ -94,13 +94,23 @@ body {
     <form role="form" action="/start" method="post">
       <input style="display: none;" type="text" name="tripStatus" value="On-going" >
       <input type="text" name="tripId" style="display: none;" value=" <%= currentTask.id %> " >
+      <input style="display: none;" type="text" id="distance" name="distance" value="  " >
       <h6 id="socketID">  </h6>  
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <button type="submit" class="btn btn-success">Start</button>
     </form>
-    <a type="button" class="btn btn-success" target="_blank" href="https://www.google.com/maps/dir/Current+Location/<%= currentTask.drop %>"   >Open on google maps</a>
+    <a type="button" class="btn btn-primary" target="_blank" href="https://www.google.com/maps/dir/Current+Location/<%= currentTask.drop %>"   >Open on google maps</a>
   
-  </div>
 
+  </div>
+<div class="col-lg-6">
+  <form role="form" action="/end" method="post">
+    <input style="display: none;" type="text" name="tripStatus" value="On-going" >
+    <input type="text" name="tripId" style="display: none;" value=" <%= currentTask.id %> " >
+    <input style="display: none;" type="text" id="distance" name="distance" value="  " >
+    <h6 id="socketID">  </h6>  
+    <button type="submit" class="btn btn-danger">End</button>
+  </form>
+</div>
   <div  class="col-lg-4 ">
     <div id="map"></div>
   </div>
@@ -247,6 +257,7 @@ function computeTotalDistance(result) {
 
   total = total / 1000;
   document.getElementById("total").innerHTML = total + " km";
+  document.getElementById("distance").value = total ;
 }
 
 // window.initMap = initMap;
