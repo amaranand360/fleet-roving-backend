@@ -34,7 +34,9 @@
       <% trips.forEach(element => { %>
 
         <div style="background-color: rgb(174, 173, 173); margin: 5px;">
-          <h6> Name: <span> <%= element.tripID %> </span> </h6>
+          <h6> Trip ID: <span> <%= element.tripID %> </span> </h6>
+          <h6> Driver name:  <span> <%= element.driverName %> </span> </h6>
+          <h6>  Vehicle number:   <span> <%= element.vehNum %> </span> </h6>
         </div>
         
       <%  }); %>
