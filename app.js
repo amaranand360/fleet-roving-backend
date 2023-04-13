@@ -1139,24 +1139,24 @@ console.log("//////////////////");
 
     // MAIL comment
 
-    // const mailOptions = {
-    //   from: 'fleetroving@gmail.com',
-    //   to: driverBill.email,
-    //   subject: 'Bill Generated',
-    //   attachments: [{
-    //     filename: 'report.pdf',
-    //     path: 'D:/WEB DEVELOPMENT/projects/fleet_management/report.pdf',
-    //     contentType: 'application/pdf'
-    //   }],
-    //       };
+    const mailOptions = {
+      from: 'fleetroving@gmail.com',
+      to: driverBill.email,
+      subject: 'Bill Generated',
+      attachments: [{
+        filename: 'report.pdf',
+        path: 'D:/WEB DEVELOPMENT/projects/fleet_management/report.pdf',
+        contentType: 'application/pdf'
+      }],
+          };
   
-    // transporter.sendMail(mailOptions, function(error, info){
-    //   if (error) {
-    //     console.log(error);
-    //   } else {
-    //     console.log('Email sent: ' + info.response);
-    //   }
-    // });
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
 
 
   });
