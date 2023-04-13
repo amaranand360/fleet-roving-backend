@@ -20,12 +20,8 @@
     "html-pdf": "^3.0.1",
     "mongoose": "^6.6.3",
     "mongoose-findorcreate": "^3.0.0",
-<<<<<<< HEAD
-    "nodemon": "^2.0.22",
-=======
     "nodemailer": "^6.9.1",
     "nodemon": "^2.0.20",
->>>>>>> dcc363af8eb053146952f326fc63581224977e9b
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^7.1.2",
