@@ -96,7 +96,8 @@ const loginSchema= new mongoose.Schema({
   const VehDetails = new mongoose.Schema({
     vehType: String,
     vehNum: String,
-    PassengerCapacity: Number
+    vehModel: String,
+    vehCapa: Number
   })
 
 const boardingEmp = new mongoose.Schema({
@@ -1268,7 +1269,9 @@ app.post("/addFleet", (req,res)=>{
         VehDetails: {
           vehType: req.body.vehType,
           vehNum: req.body.vehNum,
-          PassengerCapacity: req.body.PassengerCapacity
+          PassengerCapacity: req.body.PassengerCapacity,
+          vehCapa:req.body.vehCapa,
+          vehModel:req.body.vehModel
         }
         });
   
