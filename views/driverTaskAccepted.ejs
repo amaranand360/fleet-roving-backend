@@ -85,7 +85,7 @@ body {
     <div class="col-lg-10 m-5">
     
  <div class="row">
-
+  <p id="crd"> <%= empCords %>  </p>
   <div class="col-lg-6">
     <div class="col-lg-10"><h6>Drop:  </h6> <span id="drop"><%= currentTask.drop %></span></div>
     <div class="col-lg-10"><h6 >Pick up: </h6> <span id="pick"><%= currentTask.pickup %></span></div> 
@@ -101,8 +101,7 @@ body {
     <a type="button" class="btn btn-primary" target="_blank" href="https://www.google.com/maps/dir/Current+Location/<%= currentTask.drop %>"   >Open on google maps</a>
   
 
-  </div>
-<div class="col-lg-6">
+
   <form role="form" action="/end" method="post">
     <input style="display: none;" type="text" name="tripStatus" value="On-going" >
     <input type="text" name="tripId" style="display: none;" value=" <%= currentTask.id %> " >
@@ -110,7 +109,7 @@ body {
     <button type="submit" class="btn btn-danger">End</button>
   </form>
 </div>
-  <div  class="col-lg-4 ">
+  <div  class="col-lg-6 ">
     <div id="map"></div>
   </div>
 </div>
@@ -136,29 +135,91 @@ body {
     ></script>
 
     <script>
- 
+      const empCords = document.getElementById("crd").innerHTML.trim(); 
+      const objects = empCords.split(',');
+const array = [];
+
+for (const object of objects) {
+  const jsonObject = JSON.parse(object);
+  array.push(jsonObject);
+}
+const codsArr = [];
+for (let i = 0; i < (array.length); i++) {
+console.log(  array[i]);
+
+  const cvvc = {
+    "location": array[i] + " " + array[i+1],
+    "stopover": true
+  }
+  codsArr.push(cvvc);
+  i = i+1;
+}
+
+console.log( codsArr[codsArr.length-1].location);
+
+
+</script>   
+
+
+    <script>
+   function wait(ms){
+    var start = new Date().getTime();
+    var end = start;
+    while(end < start + ms) {
+      end = new Date().getTime();
+   }
+ }
    let map, infoWindow;
+   const og = [];
 
- 
-   window.onload =  function(){
-
-    // Try HTML5 geolocation.
-   
-      navigator.geolocation.getCurrentPosition(
+   navigator.geolocation.getCurrentPosition(
         (position) => {
           const pos = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           };
-          
+          const vvv = pos.lat + "," + pos.lng;
+          og.push(vvv);
+          console.log(vvv);
+          console.log("[][][][][][]");
+      
           console.log( pos.lat);
           console.log(pos.lng  );
-       
+          return vvv;
         },
  
       );
+         console.log('before');
+  wait(6000);  
+  console.log('after');
+console.log(og);
+console.log("*98989898(*(*(*())))");
 
 
+   window.onload =  function(){
+
+ 
+
+    // Try HTML5 geolocation.
+     
+//     const origin = navigator.geolocation.getCurrentPosition(
+//         (position) => {
+//           const pos = {
+//             lat: position.coords.latitude,
+//             lng: position.coords.longitude,
+//           };
+//           const vvv = pos.lat + "," + pos.lng;
+//           console.log(vvv);
+//           console.log("[][][][][][]");
+//           // origin.push(vvv);
+//           console.log( pos.lat);
+//           console.log(pos.lng  );
+//           return vvv;
+//         },
+ 
+//       );
+// console.log(origin);
+// console.log("*98989898(*(*(*())))");
       const liveCordinates= [];
 
  
@@ -195,10 +256,13 @@ console.log(z + "5");
 name();
 
 function initMap() {
+ 
+
   const map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 4,
-    center: { lat: -24.345, lng: 134.46 }, // Australia.
+    zoom: 6,
+    center: { lat: 13.766295, lng: 77.288122},
   });
+  
   const directionsService = new google.maps.DirectionsService();
   const directionsRenderer = new google.maps.DirectionsRenderer({
     draggable: true,
@@ -213,34 +277,77 @@ function initMap() {
       computeTotalDistance(directions);
     }
   });
-  displayRoute(
-    document.getElementById("pick").innerHTML,
-    document.getElementById("drop").innerHTML,
-    directionsService,
-    directionsRenderer
-  );
+
+
+
+  directionsRenderer.setMap(map);
+  // console.log('before');
+  // wait(6000);  
+  // console.log('after');
+  calculateAndDisplayRoute(directionsService, directionsRenderer);
 }
 
-function displayRoute(origin, destination, service, display) {
-  service
+
+
+
+
+function calculateAndDisplayRoute(directionsService, directionsRenderer) {
+ 
+
+
+
+  // const waypts = vt;
+  // const checkboxArray = document.getElementById("waypoints");
+
+  // for (let i = 0; i < checkboxArray.length; i++) {
+  //   if (checkboxArray.options[i].selected) {
+  //     waypts.push({
+  //       location: checkboxArray[i].value,
+  //       stopover: true,
+  //     });
+  //   }
+  // }
+
+ 
+  console.log(og[0]);
+  console.log("/////////////////////////");
+
+  directionsService
     .route({
-      origin: origin,
-      destination: destination,
-    //   waypoints: [
-    //     { location: "Adelaide, SA" },
-    //     { location: "Broken Hill, NSW" },
-    //   ],
+      origin: og[0],
+      destination: codsArr[codsArr.length-1].location,
+      waypoints:codsArr,
+      //  [
+      //   {"location":"12.8898017,77.6397277","stopover":true},
+      //   {"location":"12.977445,77.5722554","stopover":true},
+      //   {"location":"13.049016,77.5935633","stopover":true},
+      //   {"location":"15.435329, 77.094781","stopover":true} 
+      //  ], 
+      optimizeWaypoints: true,
       travelMode: google.maps.TravelMode.DRIVING,
-      avoidTolls: true,
     })
-    .then((result) => {
-        console.log(result.routes[0].legs[0].distance);
-      display.setDirections(result);
+    .then((response) => {
+      directionsRenderer.setDirections(response);
+
+      const route = response.routes[0];
+      // const summaryPanel = document.getElementById("directions-panel");
+
+      // summaryPanel.innerHTML = "";
+
+      // // For each route, display summary information.
+      // for (let i = 0; i < route.legs.length; i++) {
+      //   const routeSegment = i + 1;
+
+      //   summaryPanel.innerHTML +=
+      //     "<b>Route Segment: " + routeSegment + "</b><br>";
+      //   summaryPanel.innerHTML += route.legs[i].start_address + " to ";
+      //   summaryPanel.innerHTML += route.legs[i].end_address + "<br>";
+      //   summaryPanel.innerHTML += route.legs[i].distance.text + "<br><br>";
+      // }
     })
-    .catch((e) => {
-      alert("Could not display directions due to: " + e);
-    });
+    .catch((e) => window.alert("Directions request failed due to " + e));
 }
+
 
 function computeTotalDistance(result) {
   let total = 0;
@@ -279,7 +386,6 @@ alert(id);
 </script>
     </body>
 <%- include("partials/footer") -%>
-
 
 
 

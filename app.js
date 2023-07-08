@@ -107,8 +107,6 @@ const boardingEmp = new mongoose.Schema({
   phoneno: String,
   address: String,
   cordinates:String 
-
-
 });
 
   const trips = new mongoose.Schema({
@@ -608,22 +606,20 @@ Driver.findOne({"_id" : DriverTask.driverId}, (err, dr)=>{
         console.error(err);
       } else {
     
-     // MAIL comment
-    
-  //    const mailOptions = {
-  //   from: 'fleetroving@gmail.com',
-  //   to: element.email,
-  //   subject: 'Fleet assaigned',
-  //   html: html
-  //       };
+     const mailOptions = {
+    from: 'fleetroving@gmail.com',
+    to: element.email,
+    subject: 'Fleet assaigned',
+    html: html
+        };
 
-  // transporter.sendMail(mailOptions, function(error, info){
-  //   if (error) {
-  //     console.log(error);
-  //   } else {
-  //     console.log('Email sent: ' + info.response);
-  //   }
-  // });
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
 
 
 
@@ -640,7 +636,7 @@ Driver.findOne({"_id" : DriverTask.driverId}, (err, dr)=>{
           email: element.email,
           phoneno: element.phoneno,
           address: element.address,
-          cordinates:element.address  }]
+          cordinates:element.cordinates  }]
     }
   },{
     new: true,
@@ -747,18 +743,57 @@ console.log(req.body);
     currentTask = currentTask.trips;
    
     const ii = [];
- 
+  
   currentTask.forEach((element, i) => {
-    console.log(element);
+    console.log(element.boardingEmp);
+    const boardingEmps = element.boardingEmp;
+
+
+    
+
+ 
+
     if (currentTaskId == element._id ) {
      const ii = currentTask[i];
-  
-     res.render("driverTaskAccepted", {
-      currentTask: ii
+     const empCords = [];
+     
+     boardingEmps.forEach((cordinate, i) => {
+      console.log(cordinate);
+      // const xv = {
+      //   location: cordinate.cordinates,
+      //   stopover: true
+      // }
+      
+      // empCords.push(JSON.stringify(xv));
+
+      empCords.push(cordinate.cordinates);
+
     });
+ console.log();
+    // const convertedData = empCords.map(obj => {
+    //   const newObj = {};
+    //   for (let key in obj) {
+    //     newObj[key.slice(1, -1)] = obj[key];
+    //   }
+    //   return newObj;
+    // });
+    
+    // console.log(convertedData);
+
+
+
+    res.render("driverTaskAccepted", {
+      currentTask: ii, empCords:empCords, boardingEmps:boardingEmps
+    });
+    
 
     } 
+
   });
+
+
+
+
 
 
 
@@ -1064,56 +1099,56 @@ console.log("//////////////////");
         }
       });
 
-      // const template = Handlebars.compile("<p>Bill amount: {{this.billAmount}}</p>", { allowProtoPropertiesByDefault: true });
-      // const context = { billAmount: 100 };
-      // const html = template(context);
-  //     const driverBillz = driverBill.filter(element => element.billStatus === "Pending").map(({ billAmount, billStatus }) => ({ billAmount, billStatus }));
+      const template = Handlebars.compile("<p>Bill amount: {{this.billAmount}}</p>", { allowProtoPropertiesByDefault: true });
+      const context = { billAmount: 100 };
+      const html = template(context);
+      const driverBillz = pendingBills.filter(element => element.billStatus === "Pending").map(({ billAmount, billStatus }) => ({ billAmount, billStatus }));
 
       console.log(pendingBills);
 
-  //     const document = {
-  //       html : html,
-  //       path: "./output.pdf",
-  //       type: "",
-  //       data: {driverBillz},
-  //       handlebars: {
-  //         runtimeOptions: {
-  //           allowProtoPropertiesByDefault: true,
-  //           allowProtoMethodsByDefault: true,
-  //         },
-  //       },
-  //     };
+      const document = {
+        html : html,
+        path: "./output.pdf",
+        type: "",
+        data: {driverBillz},
+        handlebars: {
+          runtimeOptions: {
+            allowProtoPropertiesByDefault: true,
+            allowProtoMethodsByDefault: true,
+          },
+        },
+      };
 
   
-  // const options = {
-  //   format: "A4",
-  //   orientation: "portrait",
-  //   border: "10mm",
-  //   header: {
-  //       height: "45mm",
-  //       contents: '<div style="text-align: center;">Author: Shyam Hajare</div>'
-  //   },
-  //   footer: {
-  //       height: "28mm",
-  //       contents: {
-  //           first: 'Cover page',
-  //           default: '<span style="color: #444;"> 55 </span>/<span> 777 </span>', // fallback value
-  //           last: 'Last Page'
-  //       }
-  //   },
+  const options = {
+    format: "A4",
+    orientation: "portrait",
+    border: "10mm",
+    header: {
+        height: "45mm",
+        contents: '<div style="text-align: center;">Author: Shyam Hajare</div>'
+    },
+    footer: {
+        height: "28mm",
+        contents: {
+            first: 'Cover page',
+            default: '<span style="color: #444;"> 55 </span>/<span> 777 </span>', // fallback value
+            last: 'Last Page'
+        }
+    },
     
-  // };
+  };
 
 
 
-  //     pdf
-  //     .create(document, options)
-  //     .then((res) => {
-  //       console.log(res);
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
+      // pdf
+      // .create(document, options)
+      // .then((res) => {
+      //   console.log(res);
+      // })
+      // .catch((error) => {
+      //   console.error(error);
+      // });
 
 
 
@@ -1128,7 +1163,7 @@ console.log("//////////////////");
 
     const options = { format: 'Letter',
     "width": "8.5in", };
-    pdf.create(html, options).toFile('./report.pdf', (err, res) => {
+    pdf.create(html, options).toFile('./userBill.pdf', (err, res) => {
       if (err) {
         console.error(err);
         return;
