@@ -756,7 +756,6 @@ console.log(req.body);
      res.render("driverTaskAccepted", {
       currentTask: ii
     });
-     return ii;
 
     } 
   });
