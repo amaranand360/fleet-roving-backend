@@ -84,7 +84,6 @@
 </div>
 
 
-
 </div>
 <br>
   
@@ -107,6 +106,17 @@
               </div>
               <div class="col-lg- card-body">
                 <form  action="/addDriverTask" method="post">
+
+                  <span>
+  
+                    <label  onclick="decideTrip()" class="switch">
+                      <input id="typeOfTripButton" name="decideTripModeButton" value="ToOffice" type="checkbox">
+                      <span class="slider round"></span>
+                    </label>
+                    <p id="typeOfTripLabel"> To Office </p>  
+                    <input name="decideTripMode" id="typeOfTrip" value="To Office" >
+                  </span>
+
              <div class="form-group">
            
               <div class="row">
@@ -149,11 +159,12 @@
            
               <div class="row">
               
-                <div class="col-lg-3">
+                <div id="PickUpLoc" style="display:none" class="col-lg-3">
                     <label for="pickUp"> Add pick up address: </label>
-                    <input id="pac-input" class="input-group-text form-control" type="text" name="pickUp" placeholder="Pick Up"></div>
+                    <input id="pac-input" class="input-group-text form-control" type="text" name="pickUp" placeholder="Pick Up">
+                  </div>
                     <br>
-                    <div class="col-lg-3">  
+                    <div id="DropLoc" style="display:block" class="col-lg-3">  
                       <label for="drop"> Add drop address: </label>
                     <input id="pac-input1" class="input-group-text form-control" type="text" name="drop" placeholder="Drop"></div>      
                               </div>
@@ -188,12 +199,35 @@
      
      document.getElementById("selectedEmp").value = "";
 
+
      if (document.getElementById("selectedEmp").value = undefined) {
       
      } else {
       
      }
 
+     if (document.getElementById("typeOfTripButton").value === "ToOffice")  {
+        document.getElementById("typeOfTripLabel").innerHTML = "TO Office";
+      } 
+
+
+function decideTrip() {
+  document.getElementById("typeOfTripButton").addEventListener("click", function(){
+      if (document.getElementById("typeOfTripButton").checked == true ) {
+        document.getElementById("typeOfTripLabel").innerHTML = "From Office";
+        document.getElementById("DropLoc").style.display = "none";
+        document.getElementById("PickUpLoc").style.display = "block";
+        document.getElementById("typeOfTrip").value = "From Office";
+        document.getElementById("decideTripModeButton").value = "FromOffice";
+      } else {
+        document.getElementById("typeOfTripLabel").innerHTML = "To Office";
+        document.getElementById("DropLoc").style.display = "block";
+        document.getElementById("PickUpLoc").style.display = "none";
+        document.getElementById("typeOfTrip").value = "To Office";
+        document.getElementById("decideTripModeButton").value = "ToOffice";
+      }
+     });
+}
 
 
 

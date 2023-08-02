@@ -315,7 +315,7 @@ console.log("244");
 //   ROAD MAP
 
 function name() {
-   const z = currentTask.pickup;
+   const z = currentTask.dropCrd;
 alert(z);
 console.log(z + "5"); 
 }
@@ -365,18 +365,18 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
 
 
   setTimeout(() => {
-const vgb = {
-  "location":  document.getElementById("pickUpCrd").value,
-  "stopover": true
-}
-codsArr.unshift(vgb);
+// const vgb = {
+//   "location":  document.getElementById("dropCrd").value,
+//   "stopover": true
+// }
+// codsArr.unshift(vgb);
  console.log( codsArr);
  console.log("321");
     directionsService
     .route({
       optimizeWaypoints: true,
-      origin: codsArr[0].location , // document.getElementById("pickUpCrd").value,
-      destination: codsArr[codsArr.length - 1 ].location , // document.getElementById("dropCrd").value,
+      origin: "12.983486, 77.661494",  // codsArr[0].location , // document.getElementById("pickUpCrd").value,
+      destination:  document.getElementById("dropCrd").value,
       
       travelMode: google.maps.TravelMode.DRIVING,
      

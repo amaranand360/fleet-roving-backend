@@ -115,6 +115,7 @@ const boardingEmp = new mongoose.Schema({
     drop: String,
     pickUpLatLng: String,
     dropLatLng: String,
+    typeOfTrip: String,
     distance : {
       type: Number, default:0 
     },
@@ -548,6 +549,7 @@ app.post("/addDriverTask", (req, res)=>{
     const Ddrop = DriverTask.drop;
     const DpickUpLatLng = DriverTask.pickUpLatLng;
     const DdropLatLng = DriverTask.dropLatLng;
+    // const tripType = DriverTask.decideTripMode;
     const D = [];
 console.log(DpickUpLatLng);
     var config = {
@@ -571,7 +573,8 @@ console.log(DpickUpLatLng);
         "pickup": Dpickup,
         "drop": Ddrop,
         "pickUpLatLng": DpickUpLatLng,
-        "dropLatLng": DdropLatLng   
+        "dropLatLng": DdropLatLng,
+        "typeOfTrip" : req.body.decideTripMode, 
       }
       }
     },{new: true, upsert: true }).exec();
@@ -601,30 +604,30 @@ Driver.findOne({"_id" : DriverTask.driverId}, (err, dr)=>{
     }
      
 
-     ejs.renderFile(templatePath, data, (err, html) => {
-      if (err) {
-        console.error(err);
-      } else {
+  //    ejs.renderFile(templatePath, data, (err, html) => {
+  //     if (err) {
+  //       console.error(err);
+  //     } else {
     
-     const mailOptions = {
-    from: 'fleetroving@gmail.com',
-    to: element.email,
-    subject: 'Fleet assaigned',
-    html: html
-        };
+  //    const mailOptions = {
+  //   from: 'fleetroving@gmail.com',
+  //   to: element.email,
+  //   subject: 'Fleet assaigned',
+  //   html: html
+  //       };
 
-  transporter.sendMail(mailOptions, function(error, info){
-    if (error) {
-      console.log(error);
-    } else {
-      console.log('Email sent: ' + info.response);
-    }
-  });
+  // transporter.sendMail(mailOptions, function(error, info){
+  //   if (error) {
+  //     console.log(error);
+  //   } else {
+  //     console.log('Email sent: ' + info.response);
+  //   }
+  // });
 
 
 
-      }
-    });
+  //     }
+  //   });
 
 
 
@@ -701,6 +704,9 @@ app.get("/driverTaskAccepted", (req, res)=> {
   res.render("DriverTaskAccepted");
 })
 
+app.get("/driverTaskAcceptedToOffice", (req, res)=> {
+  res.render("driverTaskAcceptedToOffice");
+});
 
 app.get("/fleetTracking", (req, res)=>{
 
@@ -779,12 +785,26 @@ console.log(req.body);
     // });
     
     // console.log(convertedData);
+const vip = [ii]
+console.log(ii);
+console.log("/////////////////////////////////////////////////////");
+    console.log(vip[0].typeOfTrip);
 
-
-
-    res.render("driverTaskAccepted", {
+    if(vip[0].typeOfTrip == "From Office"){
+      console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+      res.render("driverTaskAccepted", {
+        currentTask: ii, empCords:empCords, boardingEmps:boardingEmps
+      });
+    } 
+    
+    if (vip[0].typeOfTrip == "To Office"){
+      console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+    res.render("driverTaskAcceptedToOffice", {
       currentTask: ii, empCords:empCords, boardingEmps:boardingEmps
     });
+
+    }
+
     
 
     } 
