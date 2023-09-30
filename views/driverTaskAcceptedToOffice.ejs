@@ -88,7 +88,7 @@ body {
   <p id="crd"> <%= empCords %>  </p>
   <div class="col-lg-6">
     <div class="col-lg-10"><h6>Drop:  </h6> <span id="drop"><%= currentTask.drop %></span></div>
-    <div class="col-lg-10"><h6 >Pick up: </h6> <span id="pick"><%= currentTask.pickup %></span></div> 
+    <!-- <div class="col-lg-10"><h6 >Pick up: </h6> <span id="pick"><%= currentTask.pickup %></span></div>  -->
     <h6 >Distance:</h6> <span id="total"></span> 
     
     <form role="form" action="/start" method="post">
@@ -375,7 +375,7 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
     directionsService
     .route({
       optimizeWaypoints: true,
-      origin: "12.983486, 77.661494",  // codsArr[0].location , // document.getElementById("pickUpCrd").value,
+      origin: bob[0].location, //"12.882663, 77.643638",  // codsArr[0].location , // document.getElementById("pickUpCrd").value,
       destination:  document.getElementById("dropCrd").value,
       
       travelMode: google.maps.TravelMode.DRIVING,

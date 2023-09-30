@@ -81,9 +81,10 @@
     <div class="col-lg-3">  <h6>Driver phone num</h6><%= reqDriver.phoneno %></p></div>
 
 <div class="col-lg-6"> <h6>Driver Vehicle type</h6><p><%= reqDriver.VehDetails[0].vehType %></p></div>
+<div class="col-lg-6"> <h6>Driver Vehicle capacity</h6><p><%= reqDriver.VehDetails[0].vehCapa %></p></div>
+
 </div>
-
-
+<input type="text" style="display: none;"  id="presentVehCapacity"  value=<%= reqDriver.VehDetails[0].vehCapa %> >
 </div>
 <br>
   
@@ -108,15 +109,17 @@
                 <form  action="/addDriverTask" method="post">
 
                   <span>
-  
+                    <h6> Type of trip: </h6>
                     <label  onclick="decideTrip()" class="switch">
                       <input id="typeOfTripButton" name="decideTripModeButton" value="ToOffice" type="checkbox">
                       <span class="slider round"></span>
                     </label>
                     <p id="typeOfTripLabel"> To Office </p>  
-                    <input name="decideTripMode" id="typeOfTrip" value="To Office" >
+                    <input style="display: none;" name="decideTripMode" id="typeOfTrip" value="To Office" >
                   </span>
-
+<br>
+<br>
+<h6> Select Employees </h6>
              <div class="form-group">
            
               <div class="row">
@@ -140,7 +143,7 @@
                     
                           <tr>
                         <th scope="row"><%= index + 1 %></th>
-                        <td>    <input type="checkbox" name="add" value= <%= emp.employeeID %> id=""> </td>
+                        <td>    <input type="checkbox" name="add" class="thisEmp" value= <%= emp.employeeID %> > </td>
                         <td> <%= emp.name %> </td>
                         <td><%= emp.email %></td>
                         <td><%= emp.phoneno %></td>
@@ -173,7 +176,7 @@
             <input type="text" id="pickUpLatLng" style="display: none;" name="pickUpLatLng" class="input-group-text"  value= "">
             <input type="text" id="dropLatLng" style="display: none;" name="dropLatLng" class="input-group-text"  value= "">
             <input type="text" style="display: none;" name="driverId" class="input-group-text"  value= <%= reqDriver._id %>
-
+            
 
           
           
@@ -197,6 +200,9 @@
 
 <script>
      
+
+
+
      document.getElementById("selectedEmp").value = "";
 
 
@@ -458,6 +464,23 @@ function initMap() {
 }
 
 window.initMap = initMap;
+
+</script>
+<script>
+
+var limit = document.getElementById("presentVehCapacity").value;
+var checkboxes = document.querySelectorAll('input.thisEmp');
+
+checkboxes.forEach(function(checkbox) {
+  checkbox.addEventListener('click', function(evt) {
+    var checkedCheckboxes = document.querySelectorAll('.thisEmp:checked');
+    
+    if (checkedCheckboxes.length > limit) {
+      this.checked = false;
+      alert("This vehicle can only be filled with " + limit + " number of people");
+    }
+  });
+});
 
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSX3jhBJVmlod62B-joxdetnWt-_yBnLM&callback=initMap&libraries=places&v=weekly"></script>

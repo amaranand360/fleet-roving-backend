@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <!-- <meta charset="utf-8" /> -->
+    <meta charset="utf-8" />
     <title>Roads API Demo</title>
     <style>
       html,
@@ -42,101 +42,8 @@
 <script src="https://maps.googleapis.com/maps/api/js?interpolate=true&libraries=drawing,places&key=AIzaSyDSX3jhBJVmlod62B-joxdetnWt-_yBnLM"></script>
 
 
+
 <script>
-const result = [];
-result.push( <%- JSON.stringify(result) %> );
-
-const empDetails = result[0].trips[0].boardingEmp
-console.log(result);
-console.log(typeof(result));
-
-
-const empCords = [];
-var vg = "";
-empDetails.forEach(element => {
-  vg = vg + "," +element.cordinates;
-  empCords.push(  element.cordinates );
-});
-console.log(vg);
-console.log(empCords);
-
-
-const bob= [];
-
-navigator.geolocation.getCurrentPosition(
-   (position) => {
-     const pos = {
-       lat: position.coords.latitude,
-       lng: position.coords.longitude,
-     };
-     vvv =   {
-      "location":  pos.lat + "," + pos.lng,
-    "stopover": true
-    }
-  bob.push(vvv);
-     console.log(codsArr);
-     console.log("[][][][][][]");
- 
-     console.log( pos.lat);
-     console.log(pos.lng  );
-    
-   },
-
- );
-
- console.log(bob);
- console.log(139);
-
-
-
-const objects = vg.split(',');
-const yy = objects;
-yy.shift();
-console.log(yy);
-console.log("[][][][]");
-
-const vtu = [];
-
-for (let i = 0; i < (yy.length); i++) {
-  const cvvc = {
-    "latitude": yy[i]  ,
-    "longitude": yy[i+1]
-  }
-  vtu.push(cvvc);
-  i = i+1;
-}
-
-const array = [];
-
-
-
-
-for (const object of objects) {
-  const jsonObject = JSON.parse(object);
-  array.push(jsonObject);
-}
-
-vtu.sort((a, b) => a.latitude - b.latitude);
-console.log(vtu);
-console.log(231);
-
-
-
-
-const codsArr = [];
-
-for (let i = 0; i < (vtu.length); i++) {
-console.log(  vtu[i]);
-
-  const cvvc = {
-    "location": vtu[i].latitude + "," + vtu[i].longitude,
-    "stopover": true
-  }
-  codsArr.push(cvvc);
- 
-}
-console.log(codsArr);
-console.log("209");
 
 
 
@@ -145,13 +52,6 @@ console.log("209");
 
 
 
-window.onload =  function(){
-
-// Try HTML5 geolocation.
-
-
-
-};
 
 
 
@@ -397,21 +297,21 @@ setInterval(() => {
 
     
 
-  // var data = {
-  //   type: "FeatureCollection",
-  //   features: [
-  //     {
-  //       type: "Feature",
-  //       properties: {},
-  //       geometry: {
-  //         type: "LineString",
-  //         coordinates:[
-  //         ["12.88732678775718","77.6423806225379"],["12.88732678775718","77.6423806225379"],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379]
-  //         ]
-  //       }
-  //     }
-  //   ]
-  // };
+  var data = {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "LineString",
+          coordinates:[
+          ["12.88732678775718","77.6423806225379"],["12.88732678775718","77.6423806225379"],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379],[12.88732678775718,77.6423806225379]
+          ]
+        }
+      }
+    ]
+  };
 
 
 
@@ -468,15 +368,19 @@ for (var i = 0; i < lines.length; i++) {
   
 }
 
+console.log("<><><><><>><<><><><><><><><<><>>>>><><>");
+console.log(document.getElementById("pll").innerHTML);
+console.log(pickUpLatLng);
 
-if (result[0].trips[0].typeOfTrip == "From Office") {
-  function displayRoute(origin, destination, service, display) {
+function displayRoute(origin, destination, service, display) {
   service
     .route({
-      optimizeWaypoints: true,
-      origin: result[0].trips[0].pickUpLatLng,
-      destination: codsArr[codsArr.length - 1 ].location, 
-       waypoints: codsArr,
+      origin:"12.8874283,77.6419887",
+      destination: "12.918894, 77.669027",
+    //   waypoints: [
+    //     { location: "Adelaide, SA" },
+    //     { location: "Broken Hill, NSW" },
+    //   ],
       travelMode: google.maps.TravelMode.DRIVING,
       avoidTolls: true,
     })
@@ -488,50 +392,6 @@ if (result[0].trips[0].typeOfTrip == "From Office") {
       alert("Could not display directions due to: " + e);
     });
 }
-} else if(result[0].trips[0].typeOfTrip == "To Office") {
-  console.log(bob.location);
-console.log(",,,,,,");
-  function displayRoute(origin, destination, service, display) {
-  service
-    .route({
-      optimizeWaypoints: true,
-      origin:  "13.783263,77.79295199999999",
-      destination:result[0].trips[0].dropLatLng, 
-       waypoints: codsArr,
-      travelMode: google.maps.TravelMode.DRIVING,
-      avoidTolls: true,
-    })
-    .then((result) => {
-        console.log(result.routes[0].legs[0].distance);
-      display.setDirections(result);
-    })
-    .catch((e) => {
-      alert("Could not display directions due to: " + e);
-    });
-}
-}
-
-
-// function displayRoute(origin, destination, service, display) {
-//   service
-//     .route({
-//       origin: pickUpLatLng,
-//       destination: "13.773583, 77.780191",
-//     //   waypoints: [
-//     //     { location: "Adelaide, SA" },
-//     //     { location: "Broken Hill, NSW" },
-//     //   ],
-//       travelMode: google.maps.TravelMode.DRIVING,
-//       avoidTolls: true,
-//     })
-//     .then((result) => {
-//         console.log(result.routes[0].legs[0].distance);
-//       display.setDirections(result);
-//     })
-//     .catch((e) => {
-//       alert("Could not display directions due to: " + e);
-//     });
-// }
 
 function computeTotalDistance(result) {
   let total = 0;
@@ -586,9 +446,11 @@ sloc[0] =singleCrdn ;
 
 });
 
+
+
+
         </script>
   </head>
-
   <body>
     <div id="map"></div>
     <div id="bar">
@@ -596,25 +458,18 @@ sloc[0] =singleCrdn ;
       <!-- <p> <%= result.trips %> </p> -->
       <br>
       <br>
-      <h1 type="text" id="pll" > <%= result.trips[0].pickUpLatLng %> </h1>
-      <hr>
-      <h1 type="text" id="dll" > <%= result.trips[0].dropLatLng %> </h1>
+      <h1 type="text" id="pll" >  <%= result.trips[0].pickUpLatLng %> </h1>
+      <p>-----</p>
+      <h1 type="text" id="dll" >  <%= result.trips[0].dropLatLng %> </h1>
       <p class="auto"><input type="text" id="autoc" /></p>
-      <p id="details"> <%= result %> </p>
-      
-      
       <p><a id="clear" href="#">Click here</a> to clear map.</p>
     </div>
     <script>
+      const origin = JSON.stringify(result.trips[0].pickUpLatLng.value)
       const pickUpLatLng = document.getElementById("pll").innerHTML;
-const dropLatLng= document.getElementById("dll").innerHTML;
-
-
-
-
-const details = JSON.parse(document.getElementById("details").innerHTML);
-console.log(details); 
-console.log("471");
+  const dropLatLng= document.getElementById("dll").innerHTML;
+  
     </script>
   </body>
+
 </html>

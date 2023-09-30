@@ -212,6 +212,7 @@ function ls(){
     console.log(user);
 
 
+
     const hashedPassword = user.passwordHash;
 
     console.log(password);
@@ -231,7 +232,7 @@ function ls(){
         }
        });  
     }
-
+  
     console.log(verifyPassword()  + "SCSACSA");
 
   
@@ -376,20 +377,17 @@ app.get("/employees", (req,res)=>{
 });
 
 
+
 app.get("/employeeDashboard", (req,res)=>{
 
   const userID= req.user.userID;
 
 
 Employee.findOne({employeeID: userID}  , function(err, empresult){
-
     res.render("employeeDashboard", {
       empresult:empresult
       });
     });
-
-
-
 });
 
 app.get("/login", (req,res)=>{
@@ -443,19 +441,17 @@ console.log(req.isAuthenticated + "adminDAshboard");
     res.send("You have no prvilages to view this page");
   }
 
-  // var d;
 
+  // var d;
   // Driver.find({}, (err, driverResult)=>{  
   //    d = driverResult.length;
-  
   //   res.render("adminDashboard", {noOfDrivers:d});
   // });
-  
   // Employee.find({}, (err, driverResult)=>{  
   //   const d = driverResult.length;
   //   console.log(d);
   // });
-  
+
 
 });
 
@@ -473,9 +469,7 @@ app.get("/driverTasks", (req, res)=>{
 
 io.on("connection", (socket) => {
   console.log(typeof(socket.id));
-
   console.log("Socket is active to be connected");
-
 
   // socket.on("vv", (obj, livec) =>{
   //   console.log(obj);
@@ -527,7 +521,7 @@ const smtpConfig = {
   port: 587,
   auth: {
     user: 'fleetroving@gmail.com',
-    pass: "pjleezcvmkfkumkf"
+    pass: "Fleet@123"
   },
 };
 const transporter = nodemailer.createTransport(smtpConfig);
@@ -961,7 +955,7 @@ app.post("/addAdmin", function (req, res) {
   
 
 app.get("/empPrevTrips", (req, res)=>{
-    Employee.find({"EmployeeID": req.user.userID}, (err, emp)=>{
+    Employee.find({"employeeID": req.user.userID}, (err, emp)=>{
     console.log(emp[0].empTrips);
     res.render("empPrevTrips", {trips:emp[0].empTrips });
   });
@@ -1496,8 +1490,9 @@ const tripID = ObjectId(req.body.tripId);
 console.log(tripID);
 
 Driver.findOne({"trips._id":tripID },{ 'trips.$': 1 } ,(err, result)=>{
-
-  res.render("track", {result:result});
+  console.log(result);
+  console.log("66666666666666666666666666888888888888888888888889999999999999999999999");
+  res.render("track", {result});
 });
 
 });

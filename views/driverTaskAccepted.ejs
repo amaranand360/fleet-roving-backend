@@ -85,9 +85,9 @@ body {
     <div class="col-lg-10 m-5">
     
  <div class="row">
-  <p id="crd"> <%= empCords %>  </p>
+  <p style="display: none;" id="crd"> <%= empCords %>  </p>
   <div class="col-lg-6">
-    <div class="col-lg-10"><h6>Drop:  </h6> <span id="drop"><%= currentTask.drop %></span></div>
+    <!-- <div class="col-lg-10"><h6>Drop:  </h6> <span id="drop"><%= currentTask.drop %></span></div> -->
     <div class="col-lg-10"><h6 >Pick up: </h6> <span id="pick"><%= currentTask.pickup %></span></div> 
     <h6 >Distance:</h6> <span id="total"></span> 
     
@@ -198,8 +198,8 @@ navigator.geolocation.getCurrentPosition(
 console.log(">>>>>><<<<<<<<<");
   
 const yy = objects;
-console.log(yy);
-
+console.log(empCords);
+console.log("[][][][]");
 const vtu = [];
       
 

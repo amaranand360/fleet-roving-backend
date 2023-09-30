@@ -59,8 +59,9 @@
                 <!-- <% console.log(fleet.trips[index]) %> -->
                 <% const tripsArr = fleet.trips %>
                 <% tripsArr.forEach((trip, i)=>{ %>
+                    <% index = index + 1 %>
                     <tr>
-                        <th scope="row"><%= index + 1 %></th>
+                        <th scope="row"><%= index  %></th>
                         <td> <%= trip.pickup %> </td>
                         <td><%= trip.drop %></td>
                         <td><%= trip.Status %></td>
@@ -72,6 +73,7 @@
                             <input  value= "<%=  trip._id  %>" name="tripId" style="display: none;">
                             <button class="btn btn-info p-2"   type="submit"> Track </button> </form> </td>
                       </tr>
+                   
                 <% }) %>
              <% }) %>
                     </tbody>
