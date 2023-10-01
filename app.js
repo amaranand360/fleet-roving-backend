@@ -351,7 +351,7 @@ res.redirect("/fleets");
 
 
 app.get("/", (req, res)=>{
-   res.render("home")
+   res.send("home")
 });
 
 
@@ -361,7 +361,7 @@ app.get("/fleets", (req,res)=>{
     
     const d = driverResult;
     // console.log(d);
-    res.render("fleets", {fleet:d});
+    res.send("fleets", {fleet:d});
   });
   
 
@@ -372,7 +372,7 @@ app.get("/employees", (req,res)=>{
     
     const e = EmployeeResults;
     // console.log(e);
-    res.render("employees", {EmployeeResults:e});
+    res.send("employees", {EmployeeResults:e});
   });
 });
 
@@ -384,22 +384,22 @@ app.get("/employeeDashboard", (req,res)=>{
 
 
 Employee.findOne({employeeID: userID}  , function(err, empresult){
-    res.render("employeeDashboard", {
+    res.send("employeeDashboard", {
       empresult:empresult
       });
     });
 });
 
 app.get("/login", (req,res)=>{
-    res.render("login");
+    res.send("login");
 });
 
 app.get("/fleetManagement", (req,res)=>{
-  res.render("fleetManagement");
+  res.send("fleetManagement");
 });
 
 app.get("/register", (req,res)=>{
-    res.render("register");
+    res.send("register");
 });
 
 
@@ -422,7 +422,7 @@ console.log(req.isAuthenticated + "adminDAshboard");
        Employee.count({},(err, empCount)=>{
 
         Driver.find({  },{ongng : "Incomplete"}, (err, onGoing)=>{
-          res.render("adminDashboard", {drivercount:drivercount,fleetcount:fleetcount,empCount:empCount,onGoing:onGoing})
+          res.send("adminDashboard", {drivercount:drivercount,fleetcount:fleetcount,empCount:empCount,onGoing:onGoing})
     
         })
         
@@ -445,7 +445,7 @@ console.log(req.isAuthenticated + "adminDAshboard");
   // var d;
   // Driver.find({}, (err, driverResult)=>{  
   //    d = driverResult.length;
-  //   res.render("adminDashboard", {noOfDrivers:d});
+  //   res.send("adminDashboard", {noOfDrivers:d});
   // });
   // Employee.find({}, (err, driverResult)=>{  
   //   const d = driverResult.length;
@@ -491,7 +491,7 @@ io.on("connection", (socket) => {
     console.log(allTasks);
     allTasks = allTasks.trips;
     
-    res.render("driverTasks", {
+    res.send("driverTasks", {
       allTasks:allTasks
     })
   });
@@ -509,7 +509,7 @@ Employee.find({},(err, result)=>{
 
 Driver.findOne({_id: requestedDriverID}  , function(err, requestedDriverResult){
 
-    res.render("fleetManagement", {
+    res.send("fleetManagement", {
       reqDriver:requestedDriverResult,result:result
       });
     });
@@ -527,7 +527,7 @@ const smtpConfig = {
 const transporter = nodemailer.createTransport(smtpConfig);
 
 app.get("/bookingEmailTemplate",(req, res)=>{
-  res.render("bookingEmailTemplate");
+  res.send("bookingEmailTemplate");
 });
 
 
@@ -598,7 +598,7 @@ Driver.findOne({"_id" : DriverTask.driverId}, (err, dr)=>{
     }
      
 
-  //    ejs.renderFile(templatePath, data, (err, html) => {
+  //    ejs.sendFile(templatePath, data, (err, html) => {
   //     if (err) {
   //       console.error(err);
   //     } else {
@@ -695,18 +695,18 @@ Employee.findOneAndUpdate({"employeeID": element.employeeID},{
 
 app.get("/driverTaskAccepted", (req, res)=> {
 
-  res.render("DriverTaskAccepted");
+  res.send("DriverTaskAccepted");
 })
 
 app.get("/driverTaskAcceptedToOffice", (req, res)=> {
-  res.render("driverTaskAcceptedToOffice");
+  res.send("driverTaskAcceptedToOffice");
 });
 
 app.get("/fleetTracking", (req, res)=>{
 
 const f = "trips.Status";
   Driver.find({},(err, t)=>{
-    res.render("fleetTracking", {fleet: t});
+    res.send("fleetTracking", {fleet: t});
   })
 
 
@@ -719,7 +719,7 @@ app.get("/fleetDashboard", (req, res)=>{
   const userID= req.user.userID;
 
   Driver.findOne({driverID:userID}, (err, driver)=>{
-    res.render("fleetDashboard", {driver:driver});
+    res.send("fleetDashboard", {driver:driver});
   })
 
   
@@ -786,14 +786,14 @@ console.log("/////////////////////////////////////////////////////");
 
     if(vip[0].typeOfTrip == "From Office"){
       console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-      res.render("driverTaskAccepted", {
+      res.send("driverTaskAccepted", {
         currentTask: ii, empCords:empCords, boardingEmps:boardingEmps
       });
     } 
     
     if (vip[0].typeOfTrip == "To Office"){
       console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
-    res.render("driverTaskAcceptedToOffice", {
+    res.send("driverTaskAcceptedToOffice", {
       currentTask: ii, empCords:empCords, boardingEmps:boardingEmps
     });
 
@@ -957,7 +957,7 @@ app.post("/addAdmin", function (req, res) {
 app.get("/empPrevTrips", (req, res)=>{
     Employee.find({"employeeID": req.user.userID}, (err, emp)=>{
     console.log(emp[0].empTrips);
-    res.render("empPrevTrips", {trips:emp[0].empTrips });
+    res.send("empPrevTrips", {trips:emp[0].empTrips });
   });
 });
 
@@ -1063,21 +1063,21 @@ app.get("/fleetBilling", (req, res)=>{
     
     const d = driverResult;
     // console.log(d);
-    res.render("fleetBilling", {fleet:d});
+    res.send("fleetBilling", {fleet:d});
   });
   
 });
 
 app.get("/contactUs",(req, res)=>{
-  res.render("contactUs");
+  res.send("contactUs");
 })
 
 app.get("/subscribe",(req, res)=>{
-  res.render("subscribe");
+  res.send("subscribe");
 })
 
 app.get("/template",(req, res)=>{
-  res.render("template");
+  res.send("template");
 })
 
 
@@ -1091,7 +1091,7 @@ app.post("/doBill",(req, res)=>{
   
   
   Driver.find( {_id: requestedDriverID}  , function(err, requestedDriverResult){
-      // res.render("fleetManagement", {
+      // res.send("fleetManagement", {
       //   trips:requestedDriverResult.trips
       //   });
 
@@ -1166,7 +1166,7 @@ console.log("//////////////////");
 
 
 
-  ejs.renderFile('views/template.ejs', {driverBill:driverBill, pendingBills:pendingBills}, (err, html) => {
+  ejs.sendFile('views/template.ejs', {driverBill:driverBill, pendingBills:pendingBills}, (err, html) => {
     if (err) {
       console.log("ERROR:");
       console.error(err);
@@ -1214,7 +1214,7 @@ console.log("//////////////////");
 
 
   
-  res.render("template", {driverBill:driverBill, pendingBills:pendingBills});
+  res.send("template", {driverBill:driverBill, pendingBills:pendingBills});
 
       });
   });
@@ -1474,7 +1474,7 @@ socket.on("vv", (obj, livec) =>{
 
       socket.emit("hh", livec)
 
-      // res.render("track", {latlngsocket:obj});  
+      // res.send("track", {latlngsocket:obj});  
     });
   console.log(livec + "999999999");
 
@@ -1492,7 +1492,7 @@ console.log(tripID);
 Driver.findOne({"trips._id":tripID },{ 'trips.$': 1 } ,(err, result)=>{
   console.log(result);
   console.log("66666666666666666666666666888888888888888888888889999999999999999999999");
-  res.render("track", {result});
+  res.send("track", {result});
 });
 
 });
@@ -1501,7 +1501,7 @@ Driver.findOne({"trips._id":tripID },{ 'trips.$': 1 } ,(err, result)=>{
 
 app.post("/addEmpToFleet", (req, res)=>{
   Employee.find({},(err, result)=>{
-    res.render("empWaiting", {result:result});
+    res.send("empWaiting", {result:result});
   })
 });
 
@@ -1530,7 +1530,7 @@ Employee.find({"employeeID": {$in: selectedEmp}}, (err, selectedEmpDetails)=>{
   console.log("::::::::::::::");
   console.log(selectedEmpDetails);
   console.log();
-  res.render("theseEmployees", {
+  res.send("theseEmployees", {
      selectedEmpDetails:selectedEmpDetails,reqDriver:reqDriver
   })
 })
@@ -1547,7 +1547,7 @@ Employee.find({"employeeID": {$in: selectedEmp}}, (err, selectedEmpDetails)=>{
 
 
 app.get("empWaiting",(req,res)=>{
-  res.render("empWaiting");
+  res.send("empWaiting");
 })
 
 
